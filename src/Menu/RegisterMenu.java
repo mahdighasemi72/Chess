@@ -9,6 +9,10 @@ public class RegisterMenu {
     private static String loginPlayerUsername;
     private static Controller controller = new Controller();
 
+    public static Controller getController() {
+        return controller;
+    }
+
     public static String getLoginPlayerUsername() {
         return loginPlayerUsername;
     }
@@ -74,8 +78,8 @@ public class RegisterMenu {
                     } else if (!controller.passwordCheck(username,password)) {
                         System.out.println("incorrect password");
                     } else {
+                        controller.removePlayer(username,password);
                         System.out.println("remove " + username + " successfully");
-
                     }
                 }
                 }
