@@ -24,9 +24,9 @@ public class MainMenu {
                     } else if (Long.parseLong(limit)<0) {
                         System.out.println("number should be positive to have a limit or 0 for no limit");
                     } else {
-                        //TODO
                         System.out.println("new game started successfully between " + loginUsername +
                                 " and " + secondUsername + " with limit " + limit);
+                        MenusController.controlMenu(3);
                     }
                 }
             } else if (ConsoleCommand.HELPMAINMENU.getStringMatcher(command).matches()) {
@@ -39,7 +39,7 @@ public class MainMenu {
                 System.out.println(controller.getPlayers());
             } else if (ConsoleCommand.LOGOUT.getStringMatcher(command).matches()) {
                 System.out.println("logout successful");
-                MenusController.controlMenu(2);
+                MenusController.controlMenu(1);
             } else
                 System.out.println("Invalid Command");
         }

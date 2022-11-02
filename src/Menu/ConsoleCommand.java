@@ -15,7 +15,9 @@ public enum ConsoleCommand {
     NEWGAME("(?i)new_game\\s+(.+)\\s+(-?\\d+)"),
     SCOREBOARD(""),
     HELPMAINMENU("(?i)help"),
-    LOGOUT("(?!)logout");
+    LOGOUT("logout"),
+
+    SELECT("select\\s+\\[(\\d)\\],\\[(\\d)\\]");
     private final Pattern commandPattern;
 
     public Matcher getStringMatcher(String input){

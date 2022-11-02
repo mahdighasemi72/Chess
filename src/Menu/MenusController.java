@@ -12,6 +12,8 @@ public class MenusController {
                 RegisterMenu.Begin();
             case (2) :
                 MainMenu.makeGame();
+            case (3) :
+                GameMenu.play();
         }
     }
 
