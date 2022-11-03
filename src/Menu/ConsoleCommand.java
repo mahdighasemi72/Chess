@@ -13,7 +13,7 @@ public enum ConsoleCommand {
     EXIT("(?i)exit\\s*"),
 
     NEWGAME("(?i)new_game\\s+(.+)\\s+(-?\\d+)"),
-    SCOREBOARD(""),
+    SCOREBOARD("scoreboard"),
     HELPMAINMENU("(?i)help"),
     LOGOUT("logout"),
 

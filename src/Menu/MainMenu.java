@@ -40,6 +40,10 @@ public class MainMenu {
             } else if (ConsoleCommand.LOGOUT.getStringMatcher(command).matches()) {
                 System.out.println("logout successful");
                 MenusController.controlMenu(1);
+            } else if (ConsoleCommand.SCOREBOARD.getStringMatcher(command).matches()) {
+                for (Player player : controller.getPlayers()) {
+                    System.out.println("" + player);
+                }
             } else
                 System.out.println("Invalid Command");
         }
