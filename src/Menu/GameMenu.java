@@ -1,15 +1,14 @@
 package Menu;
 
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 
 public class GameMenu {
     private static Scanner scanner = new Scanner(System.in);
     private static Controller controller = RegisterMenu.getController();
-    private static HashMap<Integer,String> chessPositions = new HashMap<Integer, String>(8,8);
-
+    private static HashMap<Integer,String> chessPositions = new HashMap<Integer, String>();
+    private static String selected ;
     public static void play(){
         makeFirstChessPositions();
         while (true){
@@ -17,22 +16,39 @@ public class GameMenu {
             if (ConsoleCommand.SELECT.getStringMatcher(command).matches()){
                 Matcher matcher = ConsoleCommand.SELECT.getStringMatcher(command);
                 if (matcher.find()){
-                    if (Integer.parseInt(matcher.group(1)) > 8 |
-                            Integer.parseInt(matcher.group(1))== 0 |
-                            Integer.parseInt(matcher.group(2)) > 8 |
-                            Integer.parseInt(matcher.group(2))== 0){
+                    int y = Integer.parseInt(matcher.group(1));
+                    int x = Integer.parseInt(matcher.group(2));
+                    int position = (y*10) + x;
+                    if (y > 8 | y== 0 | x > 8 | x == 0){
                         System.out.println("wrong coordination");
+                    } else if (positionValue(position) == null) {
+                        System.out.println("no piece on this spot");
+                    } else if (!isYours(position)){
+                        System.out.println("you can only select one of your pieces");
+                    }else {
+                        selected = positionValue(position);
+                        System.out.println("selected");
+                        System.out.println(selected);
                     }
                 }
             }
         }
     }
 
-    private static String select(int position){
-        String positionValue = chessPositions.get(position);
-        return positionValue;
+    private static String positionValue(int position){
+        String selectedValue = chessPositions.get(position);
+        return selectedValue;
     }
 
+    private static boolean isYours(int position){
+        if (positionValue(position).equals("Pw")| positionValue(position).equals("Rw")|
+                positionValue(position).equals("Nw")| positionValue(position).equals("Bw")|
+                positionValue(position).equals("Kw")| positionValue(position).equals("Qw")){
+            return true;
+        }else {
+            return false;
+        }
+    }
 
 
 
