@@ -17,7 +17,8 @@ public enum ConsoleCommand {
     HELPMAINMENU("(?i)help"),
     LOGOUT("logout"),
 
-    SELECT("select\\s+\\[(\\d)\\],\\[(\\d)\\]");
+    SELECT("select\\s+\\[(\\d)\\],\\[(\\d)\\]"),
+    DESELECT("deselect");
     private final Pattern commandPattern;
 
     public Matcher getStringMatcher(String input){

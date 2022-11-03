@@ -31,6 +31,13 @@ public class GameMenu {
                         System.out.println(selected);
                     }
                 }
+            } else if (ConsoleCommand.DESELECT.getStringMatcher(command).matches()) {
+                if (selected.equals(null)){
+                    System.out.println("no piece is selected");
+                }else {
+                    selected = null;
+                    System.out.println("deselected");
+                }
             }
         }
     }
