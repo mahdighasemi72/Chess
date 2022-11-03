@@ -6,14 +6,14 @@ import java.util.ArrayList;
 
 public class MenusController {
     private static int menuNum;
+
     public static void controlMenu(int menuNum) {
-        switch (menuNum){
-            case (1) :
-                RegisterMenu.Begin();
-            case (2) :
-                MainMenu.makeGame();
-            case (3) :
-                GameMenu.play();
+        if (menuNum == 1){
+            RegisterMenu.Begin();
+        } else if (menuNum==2) {
+            MainMenu.makeGame();
+        } else if (menuNum == 3) {
+            GameMenu.play();
         }
     }
 

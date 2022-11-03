@@ -5,7 +5,7 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 
 public class GameMenu {
-    private static Scanner scanner = new Scanner(System.in);
+    private static Scanner scanner = RegisterMenu.getScanner();
     private static Controller controller = RegisterMenu.getController();
     private static HashMap<Integer,String> chessPositions = new HashMap<Integer, String>();
     private static String selected ;

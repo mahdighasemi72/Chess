@@ -8,16 +8,16 @@ import java.util.regex.Matcher;
 public class RegisterMenu {
     private static String loginPlayerUsername;
     private static Controller controller = new Controller();
-
     public static Controller getController() {
         return controller;
     }
-
     public static String getLoginPlayerUsername() {
         return loginPlayerUsername;
     }
-
     private static Scanner scanner = new Scanner(System.in);
+    public static Scanner getScanner() {
+        return scanner;
+    }
 
     public static void Begin(){
         while (true){
@@ -57,6 +57,7 @@ public class RegisterMenu {
                         loginPlayerUsername = username;
                         System.out.println("login successful");
                         MenusController.controlMenu(2);
+                        break;
                     }
                 }
             } else if (ConsoleCommand.LIST_USERS.getStringMatcher(command).matches()) {

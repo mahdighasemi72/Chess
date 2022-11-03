@@ -6,7 +6,7 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 
 public class MainMenu {
-    private static Scanner scanner = new Scanner(System.in);
+    private static Scanner scanner = RegisterMenu.getScanner();
     private static Controller controller = RegisterMenu.getController();
     public static void makeGame(){
         while (true){
@@ -27,6 +27,7 @@ public class MainMenu {
                         System.out.println("new game started successfully between " + loginUsername +
                                 " and " + secondUsername + " with limit " + limit);
                         MenusController.controlMenu(3);
+                        break;
                     }
                 }
             } else if (ConsoleCommand.HELPMAINMENU.getStringMatcher(command).matches()) {
@@ -40,6 +41,7 @@ public class MainMenu {
             } else if (ConsoleCommand.LOGOUT.getStringMatcher(command).matches()) {
                 System.out.println("logout successful");
                 MenusController.controlMenu(1);
+                break;
             } else if (ConsoleCommand.SCOREBOARD.getStringMatcher(command).matches()) {
                 for (Player player : controller.getPlayers()) {
                     System.out.println("" + player);
