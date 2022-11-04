@@ -6,25 +6,20 @@ import java.util.ArrayList;
 
 public class Controller {
     private static ArrayList<Player> players = new ArrayList<>();
-
     public Controller() {
         this.players = players;
     }
-
     public ArrayList<Player> getPlayers() {
         return players;
     }
-
     public static void addPlayer(String userName, String passWord){
         Player player = new Player(userName, passWord);
         players.add(player);
     }
-
     public static void removePlayer(String userName, String passWord){
         Player player = new Player(userName, passWord);
         players.remove(player);
     }
-
     public static boolean playerIsExist(String userName){
         for (Player player : players) {
             if (userName.equals(player.getUserName())){
@@ -33,7 +28,6 @@ public class Controller {
         }
         return false;
     }
-
     public static Player getPlayerByUsername(String username) {
         for (Player player : players) {
             if(player.getUserName().equals(username))
@@ -48,5 +42,21 @@ public class Controller {
         } else {
             return false;
         }
+    }
+    public static boolean checkPath(String pieceName, int x, int y, int destinationX, int destinationY){
+        if (pieceName.equals("Pw")){
+            if (y == 2){
+                if (destinationY == y+1 & destinationX == x){
+                    return true;
+                } else if (destinationY == y+2 & destinationX == x) {
+                    return true;
+                } else
+                    return false;
+            } else if (destinationY == y+1 & destinationX == x){
+                return  true;
+            } else
+                return false;
+        } else
+            return false;
     }
 }

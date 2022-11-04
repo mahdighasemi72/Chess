@@ -8,7 +8,9 @@ public class GameMenu {
     private static Scanner scanner = RegisterMenu.getScanner();
     private static Controller controller = RegisterMenu.getController();
     private static HashMap<Integer,String> chessPositions = new HashMap<Integer, String>();
-    private static String selected ;
+    private static String selectedName;
+    private static int selectedX;
+    private static int selectedY;
     public static void play(){
         makeFirstChessPositions();
         while (true){
@@ -26,17 +28,27 @@ public class GameMenu {
                     } else if (!isYours(position)){
                         System.out.println("you can only select one of your pieces");
                     }else {
-                        selected = positionValue(position);
+                        selectedName = positionValue(position);
+                        selectedX = x;
+                        selectedY = y;
                         System.out.println("selected");
-                        System.out.println(selected);
                     }
                 }
             } else if (ConsoleCommand.DESELECT.getStringMatcher(command).matches()) {
-                if (selected.equals(null)){
+                if (selectedName.equals(null)){
                     System.out.println("no piece is selected");
                 }else {
-                    selected = null;
+                    selectedName = null;
                     System.out.println("deselected");
+                }
+            } else if (ConsoleCommand.MOVE.getStringMatcher(command).matches()) {
+                Matcher matcher = ConsoleCommand.MOVE.getStringMatcher(command);
+                if (matcher.find()){
+                    int destinationY = Integer.parseInt(matcher.group(1));
+                    int destinationX = Integer.parseInt(matcher.group(2));
+                    if (Controller.checkPath(selectedName,selectedX,selectedY,destinationX,destinationY)){
+                        System.out.println("correct path");
+                    }
                 }
             }
         }
