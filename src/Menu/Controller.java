@@ -43,20 +43,5 @@ public class Controller {
             return false;
         }
     }
-    public static boolean checkPath(String pieceName, int x, int y, int destinationX, int destinationY){
-        if (pieceName.equals("Pw")){
-            if (y == 2){
-                if (destinationY == y+1 & destinationX == x){
-                    return true;
-                } else if (destinationY == y+2 & destinationX == x) {
-                    return true;
-                } else
-                    return false;
-            } else if (destinationY == y+1 & destinationX == x){
-                return  true;
-            } else
-                return false;
-        } else
-            return false;
-    }
+
 }

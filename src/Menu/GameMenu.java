@@ -11,8 +11,10 @@ public class GameMenu {
     private static String selectedName;
     private static int selectedX;
     private static int selectedY;
+    private static boolean isWhiteTurn;
     public static void play(){
         makeFirstChessPositions();
+        isWhiteTurn = true;
         while (true){
             String command = scanner.nextLine().trim();
             if (ConsoleCommand.SELECT.getStringMatcher(command).matches()){
@@ -46,7 +48,16 @@ public class GameMenu {
                 if (matcher.find()){
                     int destinationY = Integer.parseInt(matcher.group(1));
                     int destinationX = Integer.parseInt(matcher.group(2));
-                    if (Controller.checkPath(selectedName,selectedX,selectedY,destinationX,destinationY)){
+                    int destinationPosition = (destinationY*10) + destinationX;
+                    if (!isWhiteTurn){
+                        System.out.println("already moved");
+                    } else if (destinationY > 8 | destinationY== 0 | destinationX > 8 | destinationX == 0) {
+                        System.out.println("wrong coordination");
+                    } else if (selectedName.equals(null)) {
+                        System.out.println("do not have any selected piece");
+                    } else if (isYours(destinationPosition)) {
+                        System.out.println("cannot move to the spot");
+                    } else if (checkPath(selectedName,selectedX,selectedY,destinationX,destinationY)){
                         System.out.println("correct path");
                     }
                 }
@@ -58,7 +69,6 @@ public class GameMenu {
         String selectedValue = chessPositions.get(position);
         return selectedValue;
     }
-
     private static boolean isYours(int position){
         if (positionValue(position).equals("Pw")| positionValue(position).equals("Rw")|
                 positionValue(position).equals("Nw")| positionValue(position).equals("Bw")|
@@ -68,9 +78,146 @@ public class GameMenu {
             return false;
         }
     }
+    private static boolean isBarrierOnPath(String pieceName, int x, int y, int destinationX, int destinationY){
+        int destinationPosition = (destinationY*10) + destinationX;
+        if (pieceName.equals("Pw")) {
+            if (y == 2){
+                if (destinationY == 3){
+                    if (!positionValue(destinationPosition).equals(null)){
+                        return true;
+                    }
+                } else if (destinationY == 4){
+                    if (!positionValue(destinationPosition).equals(null) | !positionValue(30+x).equals(null)){
+                        return true;
+                    }
+                }
+            } else {
+                if (!positionValue(destinationPosition).equals(null)){
+                    return true;
+                }
+            }
+        } else if (pieceName.equals("Rw")) {
+            if (destinationX - x == 0){
+                if (destinationY > y){
+                    for (int i=0; i< Math.abs(destinationY-y); i++){
+                        if(!positionValue(10*(y+i) + x ).equals(null)){
+                            return true;
+                        }
+                    }
+                } else {
+                    for (int i=0; i< Math.abs(destinationY-y); i++){
+                        if(!positionValue(10*(y-i) + x ).equals(null)){
+                            return true;
+                        }
+                    }
+                }
+            }else if (destinationY - y == 0){
+                if (destinationX > x){
+                    for (int i=0; i< Math.abs(destinationX-x); i++){
+                        if(!positionValue(10*(y) + (x+i)).equals(null)){
+                            return true;
+                        }
+                    }
+                } else {
+                    for (int i=0; i< Math.abs(destinationX-x); i++){
+                        if(!positionValue(10*(y) + (x-i)).equals(null)){
+                            return true;
+                        }
+                    }
+                }
+            }
+        } else if (pieceName.equals("Bw")) {
+            if (destinationX > x & destinationY > y){
+                for (int i=0; i< Math.abs(destinationX-x); i++) {
+                    if (!positionValue((10 * (y + i)) + (x + i)).equals(null)) 
+                        return true;
+                }
+            } else if (destinationX > x & destinationY < y) {
+                for (int i=0; i< Math.abs(destinationX-x); i++) {
+                    if (!positionValue((10 * (y - i)) + (x + i)).equals(null))
+                        return true;
+                }
+            } else if (destinationX < x & destinationY > y) {
+                for (int i=0; i< Math.abs(destinationX-x); i++) {
+                    if (!positionValue((10 * (y + i)) + (x - i)).equals(null))
+                        return true;
+                }
+            } else if (destinationX < x & destinationY < y) {
+                for (int i=0; i< Math.abs(destinationX-x); i++) {
+                    if (!positionValue((10 * (y - i)) + (x - i)).equals(null))
+                        return true;
+                }
+            } else if (pieceName.equals("Qw")) {
+                if (destinationX > x & destinationY > y){
+                    for (int i=0; i< Math.abs(destinationX-x); i++) {
+                        if (!positionValue((10 * (y + i)) + (x + i)).equals(null))
+                            return true;
+                    }
+                } else if (destinationX > x & destinationY < y) {
+                    for (int i=0; i< Math.abs(destinationX-x); i++) {
+                        if (!positionValue((10 * (y - i)) + (x + i)).equals(null))
+                            return true;
+                    }
+                } else if (destinationX < x & destinationY > y) {
+                    for (int i=0; i< Math.abs(destinationX-x); i++) {
+                        if (!positionValue((10 * (y + i)) + (x - i)).equals(null))
+                            return true;
+                    }
+                } else if (destinationX < x & destinationY < y) {
+                    for (int i=0; i< Math.abs(destinationX-x); i++) {
+                        if (!positionValue((10 * (y - i)) + (x - i)).equals(null))
+                            return true;
+                    }
+                } else if (destinationX - x == 0){
+                    if (destinationY > y){
+                        for (int i=0; i< Math.abs(destinationY-y); i++){
+                            if(!positionValue(10*(y+i) + x ).equals(null)){
+                                return true;
+                            }
+                        }
+                    } else {
+                        for (int i=0; i< Math.abs(destinationY-y); i++){
+                            if(!positionValue(10*(y-i) + x ).equals(null)){
+                                return true;
+                            }
+                        }
+                    }
+                }else if (destinationY - y == 0){
+                    if (destinationX > x){
+                        for (int i=0; i< Math.abs(destinationX-x); i++){
+                            if(!positionValue(10*(y) + (x+i)).equals(null)){
+                                return true;
+                            }
+                        }
+                    } else {
+                        for (int i=0; i< Math.abs(destinationX-x); i++){
+                            if(!positionValue(10*(y) + (x-i)).equals(null)){
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
 
-
-
+    public static boolean checkPath(String pieceName, int x, int y, int destinationX, int destinationY){
+        if (pieceName.equals("Pw")){
+            if (y == 2){
+                if (destinationY == y+1 & destinationX == x){
+                    return true;
+                } else if (destinationY == y+2 & destinationX == x) {
+                    return true;
+                } else
+                    return false;
+            } else if (destinationY == y+1 & destinationX == x){
+                return  true;
+            } else
+                return false;
+        } else
+            return false;
+    }
     private static void makeFirstChessPositions(){
         for (int i=1; i<9; i++){
             for (int j=1; j<9; j++){
