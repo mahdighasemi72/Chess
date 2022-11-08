@@ -283,7 +283,21 @@ public class GameMenu {
             } else
                 System.out.println("cannot move to the spot");
         } else if (pieceName.equals("Bw")) {
-
+            if (Math.abs(destinationY-y) == Math.abs(destinationX-x)){
+                if (isBarrierOnPath(pieceName,x,y,destinationX,destinationY)){
+                    System.out.println("cannot move to the spot");
+                }else if (positionValue(destinationPosition)==null){
+                    chessPositions.put(destinationPosition, positionValue(position));
+                    chessPositions.put(position, null);
+                    System.out.println("moved");
+                }else {
+                    chessPositions.put(destinationPosition, positionValue(position));
+                    chessPositions.put(position, null);
+                    System.out.println("rival piece destroyed");
+                    //TODO(Enemy Destroyed)
+                }
+            } else
+                System.out.println("cannot move to the spot");
         }
     }
     private static void makeFirstChessPositions(){
