@@ -19,7 +19,9 @@ public enum ConsoleCommand {
 
     SELECT("select\\s+\\[(\\d)\\],\\[(\\d)\\]"),
     DESELECT("deselect"),
-    MOVE("move\\s+\\[(\\d)\\],\\[(\\d)\\]");
+    MOVE("move\\s+\\[(\\d)\\],\\[(\\d)\\]"),
+    NEXT_TURN("next_turn");
+
     private final Pattern commandPattern;
 
     public Matcher getStringMatcher(String input){

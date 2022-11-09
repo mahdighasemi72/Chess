@@ -61,6 +61,13 @@ public class GameMenu {
                         checkPath(selectedName,selectedX,selectedY,destinationX,destinationY);
                     }
                 }
+            } else if (ConsoleCommand.NEXT_TURN.getStringMatcher(command).matches()) {
+                if (isWhiteTurn)
+                    System.out.println("you must move then proceed to next turn");
+                else {
+                    System.out.println("turn completed");
+                    isWhiteTurn = true;
+                }
             }
         }
     }
@@ -214,6 +221,7 @@ public class GameMenu {
                         } else {
                             chessPositions.put(destinationPosition, positionValue(position));
                             chessPositions.put(position, null);
+                            isWhiteTurn = false;
                             System.out.println("moved");
                         }
                     } else {
@@ -225,6 +233,7 @@ public class GameMenu {
                     else{
                         chessPositions.put(destinationPosition, positionValue(position));
                         chessPositions.put(position, null);
+                        isWhiteTurn = false;
                         System.out.println("moved");
                     }
                 } else{
@@ -234,6 +243,7 @@ public class GameMenu {
                 if (!isYours(position) & positionValue(position) != null & destinationY == y+1){
                     chessPositions.put(destinationPosition, positionValue(position));
                     chessPositions.put(position, null);
+                    isWhiteTurn = false;
                     System.out.println("rival piece destroyed");
                     //TODO(Enemy Destroyed)
                 }
@@ -247,10 +257,12 @@ public class GameMenu {
                 else if (positionValue(destinationPosition)==null){
                     chessPositions.put(destinationPosition, positionValue(position));
                     chessPositions.put(position, null);
+                    isWhiteTurn = false;
                     System.out.println("moved");
                 } else {
                     chessPositions.put(destinationPosition, positionValue(position));
                     chessPositions.put(position, null);
+                    isWhiteTurn = false;
                     System.out.println("rival piece destroyed");
                     //TODO(Enemy Destroyed)
                 }
@@ -262,10 +274,12 @@ public class GameMenu {
                 if (positionValue(destinationPosition)==null) {
                     chessPositions.put(destinationPosition, positionValue(position));
                     chessPositions.put(position, null);
+                    isWhiteTurn = false;
                     System.out.println("moved");
                 } else {
                     chessPositions.put(destinationPosition, positionValue(position));
                     chessPositions.put(position, null);
+                    isWhiteTurn = false;
                     System.out.println("rival piece destroyed");
                     //TODO(Enemy Destroyed)
                 }
@@ -273,10 +287,12 @@ public class GameMenu {
                 if (positionValue(destinationPosition)==null) {
                     chessPositions.put(destinationPosition, positionValue(position));
                     chessPositions.put(position, null);
+                    isWhiteTurn = false;
                     System.out.println("moved");
                 } else {
                     chessPositions.put(destinationPosition, positionValue(position));
                     chessPositions.put(position, null);
+                    isWhiteTurn = false;
                     System.out.println("rival piece destroyed");
                     //TODO(Enemy Destroyed)
                 }
@@ -289,10 +305,12 @@ public class GameMenu {
                 }else if (positionValue(destinationPosition)==null){
                     chessPositions.put(destinationPosition, positionValue(position));
                     chessPositions.put(position, null);
+                    isWhiteTurn = false;
                     System.out.println("moved");
                 }else {
                     chessPositions.put(destinationPosition, positionValue(position));
                     chessPositions.put(position, null);
+                    isWhiteTurn = false;
                     System.out.println("rival piece destroyed");
                     //TODO(Enemy Destroyed)
                 }
@@ -305,10 +323,12 @@ public class GameMenu {
                 }else if (positionValue(destinationPosition)==null){
                     chessPositions.put(destinationPosition, positionValue(position));
                     chessPositions.put(position, null);
+                    isWhiteTurn = false;
                     System.out.println("moved");
                 }else {
                     chessPositions.put(destinationPosition, positionValue(position));
                     chessPositions.put(position, null);
+                    isWhiteTurn = false;
                     System.out.println("rival piece destroyed");
                     //TODO(Enemy Destroyed)
                 }
@@ -318,10 +338,12 @@ public class GameMenu {
                 else if (positionValue(destinationPosition)==null){
                     chessPositions.put(destinationPosition, positionValue(position));
                     chessPositions.put(position, null);
+                    isWhiteTurn = false;
                     System.out.println("moved");
                 } else {
                     chessPositions.put(destinationPosition, positionValue(position));
                     chessPositions.put(position, null);
+                    isWhiteTurn = false;
                     System.out.println("rival piece destroyed");
                     //TODO(Enemy Destroyed)
                 }
@@ -335,10 +357,12 @@ public class GameMenu {
                 else if (positionValue(destinationPosition)==null){
                     chessPositions.put(destinationPosition, positionValue(position));
                     chessPositions.put(position, null);
+                    isWhiteTurn = false;
                     System.out.println("moved");
                 } else {
                     chessPositions.put(destinationPosition, positionValue(position));
                     chessPositions.put(position, null);
+                    isWhiteTurn = false;
                     System.out.println("rival piece destroyed");
                     //TODO(Enemy Destroyed)
                 }
