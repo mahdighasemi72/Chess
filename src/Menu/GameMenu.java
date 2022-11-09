@@ -298,6 +298,51 @@ public class GameMenu {
                 }
             } else
                 System.out.println("cannot move to the spot");
+        } else if (pieceName.equals("Qw")) {
+            if (Math.abs(destinationY-y) == Math.abs(destinationX-x)){
+                if (isBarrierOnPath(pieceName,x,y,destinationX,destinationY)){
+                    System.out.println("cannot move to the spot");
+                }else if (positionValue(destinationPosition)==null){
+                    chessPositions.put(destinationPosition, positionValue(position));
+                    chessPositions.put(position, null);
+                    System.out.println("moved");
+                }else {
+                    chessPositions.put(destinationPosition, positionValue(position));
+                    chessPositions.put(position, null);
+                    System.out.println("rival piece destroyed");
+                    //TODO(Enemy Destroyed)
+                }
+            } else if (destinationX == x | destinationY == y){
+                if (isBarrierOnPath(pieceName, x, y, destinationX, destinationY))
+                    System.out.println("cannot move to the spot");
+                else if (positionValue(destinationPosition)==null){
+                    chessPositions.put(destinationPosition, positionValue(position));
+                    chessPositions.put(position, null);
+                    System.out.println("moved");
+                } else {
+                    chessPositions.put(destinationPosition, positionValue(position));
+                    chessPositions.put(position, null);
+                    System.out.println("rival piece destroyed");
+                    //TODO(Enemy Destroyed)
+                }
+            } else {
+                System.out.println("cannot move to the spot");
+            }
+        } else if (pieceName.equals("Kw")) {
+            if (Math.abs(destinationX-x) < 2 & Math.abs(destinationY-y) < 2){
+                if (isBarrierOnPath(pieceName, x, y, destinationX, destinationY))
+                    System.out.println("cannot move to the spot");
+                else if (positionValue(destinationPosition)==null){
+                    chessPositions.put(destinationPosition, positionValue(position));
+                    chessPositions.put(position, null);
+                    System.out.println("moved");
+                } else {
+                    chessPositions.put(destinationPosition, positionValue(position));
+                    chessPositions.put(position, null);
+                    System.out.println("rival piece destroyed");
+                    //TODO(Enemy Destroyed)
+                }
+            }
         }
     }
     private static void makeFirstChessPositions(){
