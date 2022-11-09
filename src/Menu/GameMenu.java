@@ -12,8 +12,10 @@ public class GameMenu {
     private static int selectedX;
     private static int selectedY;
     private static boolean isWhiteTurn;
+    private static int undo;
     public static void play(){
         makeFirstChessPositions();
+        undo = 0;
         isWhiteTurn = true;
         while (true){
             String command = scanner.nextLine().trim();
@@ -68,6 +70,21 @@ public class GameMenu {
                     System.out.println("turn completed");
                     isWhiteTurn = true;
                 }
+            } else if (ConsoleCommand.SHOW_TURN.getStringMatcher(command).matches()) {
+                if (isWhiteTurn)
+                    System.out.println("it is white turn");
+                else
+                    System.out.println("it is black turn");
+            } else if (ConsoleCommand.UNDO.getStringMatcher(command).matches()) {
+                if (undo<3){
+                    if (!isWhiteTurn){
+                        //Todo
+                        undo++;
+                        System.out.println("undo completed");
+                    } else
+                        System.out.println("you must move before undo");
+                } else
+                    System.out.println("you cannot undo anymore");
             }
         }
     }

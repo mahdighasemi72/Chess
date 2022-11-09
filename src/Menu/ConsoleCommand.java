@@ -20,7 +20,9 @@ public enum ConsoleCommand {
     SELECT("select\\s+\\[(\\d)\\],\\[(\\d)\\]"),
     DESELECT("deselect"),
     MOVE("move\\s+\\[(\\d)\\],\\[(\\d)\\]"),
-    NEXT_TURN("next_turn");
+    NEXT_TURN("next_turn"),
+    SHOW_TURN("show_turn"),
+    UNDO("undo");
 
     private final Pattern commandPattern;
 
