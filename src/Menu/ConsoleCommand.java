@@ -22,7 +22,9 @@ public enum ConsoleCommand {
     MOVE("move\\s+\\[(\\d)\\],\\[(\\d)\\]"),
     NEXT_TURN("next_turn"),
     SHOW_TURN("show_turn"),
-    UNDO("undo");
+    UNDO("undo"),
+    UNDO_NUMBER("undo_number");
+
 
     private final Pattern commandPattern;
 

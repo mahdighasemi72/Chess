@@ -85,6 +85,8 @@ public class GameMenu {
                         System.out.println("you must move before undo");
                 } else
                     System.out.println("you cannot undo anymore");
+            } else if (ConsoleCommand.UNDO_NUMBER.getStringMatcher(command).matches()) {
+                System.out.println("you have " + (2-undo) + " undo moves");
             }
         }
     }
