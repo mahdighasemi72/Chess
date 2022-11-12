@@ -2,6 +2,7 @@ package Menu;
 
 import java.util.HashMap;
 import java.util.Scanner;
+import java.util.Stack;
 import java.util.regex.Matcher;
 
 public class GameMenu {
@@ -13,9 +14,11 @@ public class GameMenu {
     private static int selectedY;
     private static boolean isWhiteTurn;
     private static int undo;
+    private static Stack<String> moves;
     public static void play(){
         makeFirstChessPositions();
         undo = 0;
+        moves = new Stack<>();
         isWhiteTurn = true;
         while (true){
             String command = scanner.nextLine().trim();
@@ -238,10 +241,7 @@ public class GameMenu {
                         if (isBarrierOnPath(pieceName, x, y, destinationX, destinationY)){
                             System.out.println("cannot move to the spot");
                         } else {
-                            chessPositions.put(destinationPosition, positionValue(position));
-                            chessPositions.put(position, null);
-                            isWhiteTurn = false;
-                            System.out.println("moved");
+                            move(pieceName, x, y, destinationX, destinationY);
                         }
                     } else {
                         System.out.println("cannot move to the spot");
@@ -250,21 +250,14 @@ public class GameMenu {
                     if (isBarrierOnPath(pieceName, x, y, destinationX, destinationY))
                         System.out.println("cannot move to the spot");
                     else{
-                        chessPositions.put(destinationPosition, positionValue(position));
-                        chessPositions.put(position, null);
-                        isWhiteTurn = false;
-                        System.out.println("moved");
+                        move(pieceName, x, y, destinationX, destinationY);
                     }
                 } else{
                     System.out.println("cannot move to the spot");
                 }
             } else if (destinationX == x + 1 | destinationX == x - 1) {
-                if (!isYours(position) & positionValue(position) != null & destinationY == y+1){
-                    chessPositions.put(destinationPosition, positionValue(position));
-                    chessPositions.put(position, null);
-                    isWhiteTurn = false;
-                    System.out.println("rival piece destroyed");
-                    //TODO(Enemy Destroyed)
+                if (!isYours(destinationPosition) & positionValue(destinationPosition) != null & destinationY == y+1){
+                    move(pieceName, x, y, destinationX, destinationY);
                 }
             }else {
                 System.out.println("cannot move to the spot");
@@ -273,65 +266,25 @@ public class GameMenu {
             if (destinationX == x | destinationY == y){
                 if (isBarrierOnPath(pieceName, x, y, destinationX, destinationY))
                     System.out.println("cannot move to the spot");
-                else if (positionValue(destinationPosition)==null){
-                    chessPositions.put(destinationPosition, positionValue(position));
-                    chessPositions.put(position, null);
-                    isWhiteTurn = false;
-                    System.out.println("moved");
-                } else {
-                    chessPositions.put(destinationPosition, positionValue(position));
-                    chessPositions.put(position, null);
-                    isWhiteTurn = false;
-                    System.out.println("rival piece destroyed");
-                    //TODO(Enemy Destroyed)
+                else {
+                    move(pieceName, x, y, destinationX, destinationY);
                 }
             } else {
                 System.out.println("cannot move to the spot");
             }
         } else if (pieceName.equals("Nw")) {
             if (Math.abs(destinationY - y) == 2 & Math.abs(destinationX - x) == 1) {
-                if (positionValue(destinationPosition)==null) {
-                    chessPositions.put(destinationPosition, positionValue(position));
-                    chessPositions.put(position, null);
-                    isWhiteTurn = false;
-                    System.out.println("moved");
-                } else {
-                    chessPositions.put(destinationPosition, positionValue(position));
-                    chessPositions.put(position, null);
-                    isWhiteTurn = false;
-                    System.out.println("rival piece destroyed");
-                    //TODO(Enemy Destroyed)
-                }
+                move(pieceName, x, y, destinationX, destinationY);
             } else if (Math.abs(destinationY - y) == 1 & Math.abs(destinationX - x) == 2) {
-                if (positionValue(destinationPosition)==null) {
-                    chessPositions.put(destinationPosition, positionValue(position));
-                    chessPositions.put(position, null);
-                    isWhiteTurn = false;
-                    System.out.println("moved");
-                } else {
-                    chessPositions.put(destinationPosition, positionValue(position));
-                    chessPositions.put(position, null);
-                    isWhiteTurn = false;
-                    System.out.println("rival piece destroyed");
-                    //TODO(Enemy Destroyed)
-                }
+                move(pieceName, x, y, destinationX, destinationY);
             } else
                 System.out.println("cannot move to the spot");
         } else if (pieceName.equals("Bw")) {
             if (Math.abs(destinationY-y) == Math.abs(destinationX-x)){
                 if (isBarrierOnPath(pieceName,x,y,destinationX,destinationY)){
                     System.out.println("cannot move to the spot");
-                }else if (positionValue(destinationPosition)==null){
-                    chessPositions.put(destinationPosition, positionValue(position));
-                    chessPositions.put(position, null);
-                    isWhiteTurn = false;
-                    System.out.println("moved");
                 }else {
-                    chessPositions.put(destinationPosition, positionValue(position));
-                    chessPositions.put(position, null);
-                    isWhiteTurn = false;
-                    System.out.println("rival piece destroyed");
-                    //TODO(Enemy Destroyed)
+                    move(pieceName, x, y, destinationX, destinationY);
                 }
             } else
                 System.out.println("cannot move to the spot");
@@ -339,53 +292,40 @@ public class GameMenu {
             if (Math.abs(destinationY-y) == Math.abs(destinationX-x)){
                 if (isBarrierOnPath(pieceName,x,y,destinationX,destinationY)){
                     System.out.println("cannot move to the spot");
-                }else if (positionValue(destinationPosition)==null){
-                    chessPositions.put(destinationPosition, positionValue(position));
-                    chessPositions.put(position, null);
-                    isWhiteTurn = false;
-                    System.out.println("moved");
                 }else {
-                    chessPositions.put(destinationPosition, positionValue(position));
-                    chessPositions.put(position, null);
-                    isWhiteTurn = false;
-                    System.out.println("rival piece destroyed");
-                    //TODO(Enemy Destroyed)
+                    move(pieceName, x, y, destinationX, destinationY);
                 }
             } else if (destinationX == x | destinationY == y){
                 if (isBarrierOnPath(pieceName, x, y, destinationX, destinationY))
                     System.out.println("cannot move to the spot");
-                else if (positionValue(destinationPosition)==null){
-                    chessPositions.put(destinationPosition, positionValue(position));
-                    chessPositions.put(position, null);
-                    isWhiteTurn = false;
-                    System.out.println("moved");
-                } else {
-                    chessPositions.put(destinationPosition, positionValue(position));
-                    chessPositions.put(position, null);
-                    isWhiteTurn = false;
-                    System.out.println("rival piece destroyed");
-                    //TODO(Enemy Destroyed)
+                else {
+                    move(pieceName, x, y, destinationX, destinationY);
                 }
             } else {
                 System.out.println("cannot move to the spot");
             }
         } else if (pieceName.equals("Kw")) {
             if (Math.abs(destinationX-x) < 2 & Math.abs(destinationY-y) < 2){
-                if (isBarrierOnPath(pieceName, x, y, destinationX, destinationY))
-                    System.out.println("cannot move to the spot");
-                else if (positionValue(destinationPosition)==null){
-                    chessPositions.put(destinationPosition, positionValue(position));
-                    chessPositions.put(position, null);
-                    isWhiteTurn = false;
-                    System.out.println("moved");
-                } else {
-                    chessPositions.put(destinationPosition, positionValue(position));
-                    chessPositions.put(position, null);
-                    isWhiteTurn = false;
-                    System.out.println("rival piece destroyed");
-                    //TODO(Enemy Destroyed)
-                }
+                    move(pieceName, x, y, destinationX, destinationY);
+            } else {
+                System.out.println("cannot move to the spot");
             }
+        }
+    }
+    private static void move(String pieceName, int x, int y, int destinationX, int destinationY){
+        int position = (10*y) + x;
+        int destinationPosition = (10*destinationY) + destinationX;
+        if (positionValue(destinationPosition)==null){
+            chessPositions.put(destinationPosition, positionValue(position));
+            chessPositions.put(position, null);
+            isWhiteTurn = false;
+            System.out.println("moved");
+        } else {
+            chessPositions.put(destinationPosition, positionValue(position));
+            chessPositions.put(position, null);
+            isWhiteTurn = false;
+            System.out.println("rival piece destroyed");
+            //TODO(Enemy Destroyed)
         }
     }
     private static void makeFirstChessPositions(){
@@ -430,5 +370,7 @@ public class GameMenu {
         chessPositions.put(87,"Nb");
         chessPositions.put(88,"Rb");
     }
-
 }
+
+
+
