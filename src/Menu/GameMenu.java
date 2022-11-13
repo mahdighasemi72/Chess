@@ -14,11 +14,11 @@ public class GameMenu {
     private static int selectedY;
     private static boolean isWhiteTurn;
     private static int undo;
-    private static Stack<String> moves;
+    private static Stack<String> destroyedRivalPieces = new Stack<>();
+    private static Stack<String> moves = new Stack<>();//(piecename,position,destinationposition,enemy)
     public static void play(){
         makeFirstChessPositions();
         undo = 0;
-        moves = new Stack<>();
         isWhiteTurn = true;
         while (true){
             String command = scanner.nextLine().trim();
@@ -81,7 +81,13 @@ public class GameMenu {
             } else if (ConsoleCommand.UNDO.getStringMatcher(command).matches()) {
                 if (undo<3){
                     if (!isWhiteTurn){
-                        //Todo
+                        String lastMove[] = moves.pop().split(",");
+                        String pieceName = lastMove[0];
+                        int position = Integer.parseInt(lastMove[1]);
+                        int destinationPosition = Integer.parseInt(lastMove[2]);
+                        String destinationValue = lastMove[3];
+                        chessPositions.put(position,pieceName);
+                        chessPositions.put(destinationPosition,destinationValue);
                         undo++;
                         System.out.println("undo completed");
                     } else
@@ -320,12 +326,17 @@ public class GameMenu {
             chessPositions.put(position, null);
             isWhiteTurn = false;
             System.out.println("moved");
+            moves.push(pieceName + "," + String.valueOf(position) + "," + String.valueOf(destinationPosition) +
+                    "," + "");
         } else {
+            String rivalPiece = positionValue(destinationPosition);
+            moves.push(pieceName + "," + String.valueOf(position) + "," + String.valueOf(destinationPosition) +
+                    "," + rivalPiece);
+            destroyedRivalPieces.push(rivalPiece);
             chessPositions.put(destinationPosition, positionValue(position));
             chessPositions.put(position, null);
             isWhiteTurn = false;
             System.out.println("rival piece destroyed");
-            //TODO(Enemy Destroyed)
         }
     }
     private static void makeFirstChessPositions(){
