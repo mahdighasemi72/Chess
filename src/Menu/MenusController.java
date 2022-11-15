@@ -5,15 +5,19 @@ import Player.Player;
 import java.util.ArrayList;
 
 public class MenusController {
-    private static int menuNum;
+    private int menuNum;
+    private RegisterMenu registerMenu;
+    private MainMenu mainMenu;
+    private GameMenu gameMenu;
 
-    public static void controlMenu(int menuNum) {
+    public void controlMenu(int menuNum) {
         if (menuNum == 1){
-            RegisterMenu.Begin();
+            registerMenu.Begin();
         } else if (menuNum==2) {
-            MainMenu.makeGame();
+            String loginUsername = registerMenu.getLoginPlayerUsername();
+            mainMenu.makeGame(loginUsername);
         } else if (menuNum == 3) {
-            GameMenu.play();
+            gameMenu.play();
         }
     }
 
@@ -27,6 +31,9 @@ public class MenusController {
 
     public MenusController(int menuNum) {
         this.menuNum = menuNum;
+        this.registerMenu = new RegisterMenu();
+        this.mainMenu = new MainMenu();
+        this.gameMenu = new GameMenu();
     }
 
 }

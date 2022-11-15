@@ -6,9 +6,11 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 
 public class MainMenu {
-    private static Scanner scanner = RegisterMenu.getScanner();
-    private static Controller controller = RegisterMenu.getController();
-    public static void makeGame(){
+    private Scanner scanner = RegisterMenu.getScanner();
+    private Controller controller = RegisterMenu.getController();
+    private PrintMassage printMassage;
+    private MenusController menusController;
+    public void makeGame(String username){
         while (true){
             String command = scanner.nextLine().trim();
             if (ConsoleCommand.NEWGAME.getStringMatcher(command).matches()){
@@ -16,33 +18,33 @@ public class MainMenu {
                 if (matcher.find()){
                     String secondUsername = matcher.group(1);
                     String limit = matcher.group(2);
-                    String loginUsername = RegisterMenu.getLoginPlayerUsername();
+                    String loginUsername = username;
                     if (!controller.playerIsExist(secondUsername)){
-                        System.out.println(PrintMassage.NO_USER_EXIST);
+                        System.out.println(printMassage.NO_USER_EXIST);
                     } else if (secondUsername.equals(loginUsername)) {
-                        System.out.println(PrintMassage.CHOOSE_ANOTHER_PLAYER);
+                        System.out.println(printMassage.CHOOSE_ANOTHER_PLAYER);
                     } else if (Long.parseLong(limit)<0) {
-                        System.out.println(PrintMassage.LIMIT_PERIOD);
+                        System.out.println(printMassage.LIMIT_PERIOD);
                     } else {
-                        System.out.printf(PrintMassage.START_NEW_GAME , loginUsername , secondUsername , limit);
-                        MenusController.controlMenu(3);
+                        System.out.printf(printMassage.START_NEW_GAME , loginUsername , secondUsername , limit);
+                        menusController.controlMenu(3);
                         break;
                     }
                 }
             } else if (ConsoleCommand.HELPMAINMENU.getStringMatcher(command).matches()) {
-                System.out.println(PrintMassage.MAIN_MENU_HELP);
+                System.out.println(printMassage.MAIN_MENU_HELP);
             }else if (ConsoleCommand.LIST_USERS.getStringMatcher(command).matches()) {
                 System.out.println(controller.getPlayers());
             } else if (ConsoleCommand.LOGOUT.getStringMatcher(command).matches()) {
-                System.out.println(PrintMassage.LOGOUT_SUCCESSFUL);
-                MenusController.controlMenu(1);
+                System.out.println(printMassage.LOGOUT_SUCCESSFUL);
+                menusController.controlMenu(1);
                 break;
             } else if (ConsoleCommand.SCOREBOARD.getStringMatcher(command).matches()) {
                 for (Player player : controller.getPlayers()) {
                     System.out.println(player);
                 }
             } else
-                System.out.println(PrintMassage.INVALID_COMMAND);
+                System.out.println(printMassage.INVALID_COMMAND);
         }
     }
 }
