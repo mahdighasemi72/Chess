@@ -5,9 +5,7 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        Scanner scanner1 = new Scanner(System.in) ;
-        MenusController menusController = new MenusController(1);
-
-
+        MenusController menusController = new MenusController();
+        menusController.controlMenu(1);
     }
 }

@@ -5,9 +5,13 @@ import Player.Player;
 import java.util.ArrayList;
 
 public class Controller {
-    private ArrayList<Player> players = new ArrayList<>();
-    public Controller() {
-        this.players = players;
+    private static Controller controllerInstance = new Controller();
+    private ArrayList<Player> players;
+    public static Controller getInstance(){
+        return controllerInstance;
+    }
+    private Controller() {
+        players = new ArrayList<>();
     }
     public ArrayList<Player> getPlayers() {
         return players;

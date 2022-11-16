@@ -29,8 +29,7 @@ public class MenusController {
         this.menuNum = menuNum;
     }
 
-    public MenusController(int menuNum) {
-        this.menuNum = menuNum;
+    public MenusController() {
         this.registerMenu = new RegisterMenu();
         this.mainMenu = new MainMenu();
         this.gameMenu = new GameMenu();

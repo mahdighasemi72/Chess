@@ -7,7 +7,7 @@ import java.util.regex.Matcher;
 
 public class GameMenu {
     private Scanner scanner = RegisterMenu.getScanner();
-    private Controller controller = RegisterMenu.getController();
+    private Controller controller = Controller.getInstance() ;
     private PrintMassage printMassage;
     private MenusController menusController;
     private HashMap<Integer,String> chessPositions = new HashMap<Integer, String>();

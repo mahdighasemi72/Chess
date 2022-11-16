@@ -7,8 +7,8 @@ import java.util.regex.Matcher;
 
 public class MainMenu {
     private Scanner scanner = RegisterMenu.getScanner();
-    private Controller controller = RegisterMenu.getController();
-    private PrintMassage printMassage;
+    private Controller controller = Controller.getInstance() ;
+    private PrintMassage printMassage = new PrintMassage();
     private MenusController menusController;
     public void makeGame(String username){
         while (true){
@@ -27,6 +27,7 @@ public class MainMenu {
                         System.out.println(printMassage.LIMIT_PERIOD);
                     } else {
                         System.out.printf(printMassage.START_NEW_GAME , loginUsername , secondUsername , limit);
+                        menusController = new MenusController();
                         menusController.controlMenu(3);
                         break;
                     }
@@ -37,6 +38,7 @@ public class MainMenu {
                 System.out.println(controller.getPlayers());
             } else if (ConsoleCommand.LOGOUT.getStringMatcher(command).matches()) {
                 System.out.println(printMassage.LOGOUT_SUCCESSFUL);
+                menusController = new MenusController();
                 menusController.controlMenu(1);
                 break;
             } else if (ConsoleCommand.SCOREBOARD.getStringMatcher(command).matches()) {

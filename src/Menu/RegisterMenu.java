@@ -4,13 +4,13 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 public class RegisterMenu {
     private String loginPlayerUsername;
-    public static Controller controller ;
+    private Controller controller = Controller.getInstance() ;
     private static Scanner scanner;
-    private PrintMassage printMassage;
+    private PrintMassage printMassage = new PrintMassage();
     private MenusController menusController;
-    public static Controller getController() {
-        return controller;
-    }
+//    public static Controller getController() {
+//        return controller;
+//    }
     public String getLoginPlayerUsername() {
         return loginPlayerUsername;
     }
@@ -19,7 +19,7 @@ public class RegisterMenu {
     }
 
     public RegisterMenu() {
-        this.controller = new Controller();
+        //this.controller = new Controller();
         scanner = new Scanner(System.in);
     }
 
@@ -60,6 +60,7 @@ public class RegisterMenu {
                     }else {
                         loginPlayerUsername = username;
                         System.out.println(printMassage.LOGIN_SUCCESSFUL);
+                        menusController = new MenusController();
                         menusController.controlMenu(2);
                         break;
                     }
