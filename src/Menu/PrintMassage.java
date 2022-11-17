@@ -20,7 +20,7 @@ public class PrintMassage {
     public final String CHOOSE_ANOTHER_PLAYER = "you must choose another player to start a game";
     public final String LIMIT_PERIOD = "number should be positive to have a limit or 0 for no limit";
     public final String START_NEW_GAME =
-            "new game started successfully between %1$s and %2$s with limit %3$s";
+            "new game started successfully between %1$s and %2$s with limit %3$s\n";
     public final String MAIN_MENU_HELP = "new_game [username] [limit]\n" +
             "scoreboard\n" +
             "list_users\n" +

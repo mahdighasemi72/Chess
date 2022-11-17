@@ -6,10 +6,8 @@ import java.util.Stack;
 import java.util.regex.Matcher;
 
 public class GameMenu {
-    private Scanner scanner = RegisterMenu.getScanner();
     private Controller controller = Controller.getInstance() ;
-    private PrintMassage printMassage;
-    private MenusController menusController;
+    private PrintMassage printMassage = new PrintMassage();
     private HashMap<Integer,String> chessPositions = new HashMap<Integer, String>();
     private String selectedName;
     private int selectedX;
@@ -18,20 +16,20 @@ public class GameMenu {
     private int undo;
     private Stack<String> destroyedRivalPieces = new Stack<>();
     private Stack<String> moves = new Stack<>();//(piecename,position,destinationposition,enemy)
-    public void play(){
+    public int play(String command){
+        int menuNum = 3;
         makeFirstChessPositions();
         undo = 0;
         isWhiteTurn = true;
-        while (true){
-            String command = scanner.nextLine().trim();
-            executeCommand(command);
-        }
+        menuNum = executeCommand(command);
+        return menuNum;
     }
 
-    private void executeCommand(String command) {
+    private int executeCommand(String command) {
+        int menuNum = 3;
         if (ConsoleCommand.SELECT.getStringMatcher(command).matches()){
-            Matcher matcher = ConsoleCommand.SELECT.getStringMatcher(command);
-            selectProcess(matcher);
+
+            selectProcess(command);
         } else if (ConsoleCommand.DESELECT.getStringMatcher(command).matches()) {
             deselectProcess();
         } else if (ConsoleCommand.MOVE.getStringMatcher(command).matches()) {
@@ -45,6 +43,7 @@ public class GameMenu {
         } else if (ConsoleCommand.UNDO_NUMBER.getStringMatcher(command).matches()) {
             System.out.printf(printMassage.NUMBER_OF_UNDO_MOVES, 2-undo);
         }
+        return menuNum;
     }
 
     private void processUndo() {
@@ -110,7 +109,8 @@ public class GameMenu {
         }
     }
 
-    private void selectProcess(Matcher matcher) {
+    private void selectProcess(String command) {
+        Matcher matcher = ConsoleCommand.SELECT.getStringMatcher(command);
         if (matcher.find()){
             int y = Integer.parseInt(matcher.group(1));
             int x = Integer.parseInt(matcher.group(2));
