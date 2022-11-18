@@ -14,14 +14,17 @@ public class GameMenu {
     private int selectedY;
     private boolean isWhiteTurn;
     private int undo;
-    private HashMap<Integer,String> chessPositions = new HashMap<Integer, String>();
-    private Stack<String> destroyedRivalPieces = new Stack<>();
-    private Stack<String> moves = new Stack<>();//(pieceName,position,destinationPosition,enemy)
+    private HashMap<Integer,String> chessPositions ;
+    private Stack<String> destroyedRivalPieces ;
+    private Stack<String> moves ;//(pieceName,position,destinationPosition,enemy)
 
     public GameMenu(String loginUsername, String secondUsername, PrintMassage printMassage) {
         this.loginUsername = loginUsername;
         this.secondUsername = secondUsername;
         this.printMassage = printMassage;
+        chessPositions = new HashMap<Integer, String>();
+        destroyedRivalPieces = new Stack<>();
+        moves = new Stack<>();
     }
 
     public int play(String command){
