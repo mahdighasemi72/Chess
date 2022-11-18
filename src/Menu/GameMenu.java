@@ -1,21 +1,29 @@
 package Menu;
 
 import java.util.HashMap;
-import java.util.Scanner;
 import java.util.Stack;
 import java.util.regex.Matcher;
 
 public class GameMenu {
     private Controller controller = Controller.getInstance() ;
-    private PrintMassage printMassage = new PrintMassage();
-    private HashMap<Integer,String> chessPositions = new HashMap<Integer, String>();
+    private PrintMassage printMassage;
+    private String loginUsername;
+    private String secondUsername;
     private String selectedName;
     private int selectedX;
     private int selectedY;
     private boolean isWhiteTurn;
     private int undo;
+    private HashMap<Integer,String> chessPositions = new HashMap<Integer, String>();
     private Stack<String> destroyedRivalPieces = new Stack<>();
-    private Stack<String> moves = new Stack<>();//(piecename,position,destinationposition,enemy)
+    private Stack<String> moves = new Stack<>();//(pieceName,position,destinationPosition,enemy)
+
+    public GameMenu(String loginUsername, String secondUsername, PrintMassage printMassage) {
+        this.loginUsername = loginUsername;
+        this.secondUsername = secondUsername;
+        this.printMassage = printMassage;
+    }
+
     public int play(String command){
         int menuNum = 3;
         makeFirstChessPositions();
@@ -28,7 +36,6 @@ public class GameMenu {
     private int executeCommand(String command) {
         int menuNum = 3;
         if (ConsoleCommand.SELECT.getStringMatcher(command).matches()){
-
             selectProcess(command);
         } else if (ConsoleCommand.DESELECT.getStringMatcher(command).matches()) {
             deselectProcess();

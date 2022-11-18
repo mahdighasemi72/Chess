@@ -1,27 +1,35 @@
 import Menu.GameMenu;
 import Menu.MainMenu;
+import Menu.PrintMassage;
 import Menu.RegisterMenu;
 
 import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        int menuNum = 1;
+        PrintMassage printMassage = new PrintMassage();
         Scanner scanner = new Scanner(System.in);
+        int menuNum = 1;
         String input;
-        RegisterMenu registerMenu = new RegisterMenu();
-        MainMenu mainMenu = new MainMenu();
-        GameMenu gameMenu = new GameMenu();
-        String loginUsername;
+        String loginUsername = "";
+        String secondUsername = "";
+        RegisterMenu registerMenu = new RegisterMenu(printMassage);
         while (menuNum!=0){
             input = scanner.nextLine().trim();
-            if (menuNum == 1) {
-                menuNum = registerMenu.Begin(input);
-            } else if (menuNum == 2) {
-                loginUsername = registerMenu.getLoginPlayerUsername();
-                menuNum = mainMenu.makeGame(input, loginUsername);
-            } else if (menuNum == 3) {
-                menuNum = gameMenu.play(input);
+            switch (menuNum) {
+                case 1 :
+                    menuNum = registerMenu.Begin(input);
+                    break;
+                case 2 :
+                    loginUsername = registerMenu.getLoginPlayerUsername();
+                    MainMenu mainMenu = new MainMenu(loginUsername,printMassage);
+                    menuNum = mainMenu.makeGame(input);
+                    secondUsername = mainMenu.getSecondUsername();
+                    break;
+                case 3 :
+                    GameMenu gameMenu = new GameMenu(loginUsername, secondUsername, printMassage);
+                    menuNum = gameMenu.play(input);
+                    break;
             }
         }
     }

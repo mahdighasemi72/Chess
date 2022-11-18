@@ -7,13 +7,24 @@ import java.util.regex.Matcher;
 
 public class MainMenu {
     private Controller controller = Controller.getInstance() ;
-    private PrintMassage printMassage = new PrintMassage();
-    public int makeGame(String command,String loginUsername){
+    private PrintMassage printMassage;
+    private String loginUsername;
+    private String secondUsername;
+    public String getSecondUsername() {
+        return secondUsername;
+    }
+
+    public MainMenu(String loginUsername, PrintMassage printMassage) {
+        this.loginUsername = loginUsername;
+        this.printMassage = printMassage;
+    }
+
+    public int makeGame(String command){
         int menuNum = 2;
         if (ConsoleCommand.NEWGAME.getStringMatcher(command).matches()){
             Matcher matcher = ConsoleCommand.NEWGAME.getStringMatcher(command);
             if (matcher.find()){
-                String secondUsername = matcher.group(1);
+                secondUsername = matcher.group(1);
                 String limit = matcher.group(2);
                 if (!controller.playerIsExist(secondUsername)){
                     System.out.println(printMassage.NO_USER_EXIST);

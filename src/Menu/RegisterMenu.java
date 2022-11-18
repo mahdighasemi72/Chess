@@ -4,12 +4,13 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 public class RegisterMenu {
     private String loginPlayerUsername;
+    private PrintMassage printMassage;
     private Controller controller = Controller.getInstance() ;
-    private PrintMassage printMassage = new PrintMassage();
     public String getLoginPlayerUsername() {
         return loginPlayerUsername;
     }
-    public RegisterMenu() {
+    public RegisterMenu(PrintMassage printMassage) {
+        this.printMassage = printMassage;
     }
 
     public int Begin(String command){
