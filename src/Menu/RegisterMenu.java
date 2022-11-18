@@ -1,92 +1,79 @@
 package Menu;
 
-import Player.Player;
-
 import java.util.Scanner;
 import java.util.regex.Matcher;
-
 public class RegisterMenu {
-    private static String loginPlayerUsername;
-    private static Controller controller = new Controller();
-    public static Controller getController() {
-        return controller;
-    }
-    public static String getLoginPlayerUsername() {
+    private String loginPlayerUsername;
+    private PrintMassage printMassage;
+    private Controller controller = Controller.getInstance() ;
+    public String getLoginPlayerUsername() {
         return loginPlayerUsername;
     }
-    private static Scanner scanner = new Scanner(System.in);
-    public static Scanner getScanner() {
-        return scanner;
+    public RegisterMenu(PrintMassage printMassage) {
+        this.printMassage = printMassage;
     }
 
-    public static void Begin(){
-        while (true){
-            String command = scanner.nextLine().trim();
-            if (ConsoleCommand.EXIT.getStringMatcher(command).matches()){
-                System.out.println("ByeBye");
-                break;
-            } else if (ConsoleCommand.REGISTER.getStringMatcher(command).matches()) {
-                Matcher matcher = ConsoleCommand.REGISTER.getStringMatcher(command);
-                if (matcher.find()){
-                    if (!(matcher.group(1).matches("\\w+"))){
-                        System.out.println("username format is invalid");
-                    }if (!(matcher.group(2).matches("\\w+"))){
-                        System.out.println("password format is invalid");
-                    }
+    public int Begin(String command){
+        int menuNum = 1 ;
+        if (ConsoleCommand.EXIT.getStringMatcher(command).matches()){
+            System.out.println(printMassage.BYE_BYE);
+            menuNum = 0;
+        } else if (ConsoleCommand.REGISTER.getStringMatcher(command).matches()) {
+            Matcher matcher = ConsoleCommand.REGISTER.getStringMatcher(command);
+            if (matcher.find()){
+                if (!(matcher.group(1).matches("\\w+"))){
+                    System.out.println(printMassage.INVALID_USERNAME_FORMAT);
+                }if (!(matcher.group(2).matches("\\w+"))){
+                    System.out.println(printMassage.INVALID_PASSWORD_FORMAT);
+                }
                 else {
                     String username = matcher.group(1);
                     String password = matcher.group(2);
                     if (controller.playerIsExist(username)) {
-                        System.out.println("a user exists with this username");
+                        System.out.println(printMassage.USER_EXIST);
                     }else {
                         controller.addPlayer(username,password);
-                        System.out.println("register successful");
+                        System.out.println(printMassage.REGISTER_SUCCESSFUL);
                     }
                 }
+            }
+        } else if (ConsoleCommand.LOGIN.getStringMatcher(command).matches()){
+            Matcher matcher = ConsoleCommand.LOGIN.getStringMatcher(command);
+            if (matcher.find()){
+                String username = matcher.group(1);
+                String password = matcher.group(2);
+                if (!controller.playerIsExist(username)){
+                    System.out.println(printMassage.NO_USER_EXIST);
+                }else if (!controller.passwordCheck(username,password)){
+                    System.out.println(printMassage.INCORRECT_PASSWORD);
+                }else {
+                    loginPlayerUsername = username;
+                    System.out.println(printMassage.LOGIN_SUCCESSFUL);
+                    menuNum = 2;
                 }
-            } else if (ConsoleCommand.LOGIN.getStringMatcher(command).matches()){
-                Matcher matcher = ConsoleCommand.LOGIN.getStringMatcher(command);
-                if (matcher.find()){
-                    String username = matcher.group(1);
-                    String password = matcher.group(2);
-                    if (!controller.playerIsExist(username)){
-                        System.out.println("no user exists with this username");
-                    }else if (!controller.passwordCheck(username,password)){
-                        System.out.println("incorrect password");
-                    }else {
-                        loginPlayerUsername = username;
-                        System.out.println("login successful");
-                        MenusController.controlMenu(2);
-                        break;
-                    }
+            }
+        } else if (ConsoleCommand.LIST_USERS.getStringMatcher(command).matches()) {
+            System.out.println(controller.getPlayers());
+        }else if (ConsoleCommand.HELPREGISTERMENU.getStringMatcher(command).matches()) {
+            System.out.println(printMassage.REGISTER_MENU_HELP);
+        }else if (ConsoleCommand.REMOVE.getStringMatcher(command).matches()) {
+            Matcher matcher = ConsoleCommand.REMOVE.getStringMatcher(command);
+            if (matcher.find()) {
+                String username = matcher.group(1);
+                String password = matcher.group(2);
+                if (!controller.playerIsExist(username)) {
+                    System.out.println(printMassage.NO_USER_EXIST);
+                } else if (!controller.passwordCheck(username,password)) {
+                    System.out.println(printMassage.INCORRECT_PASSWORD);
+                } else {
+                    controller.removePlayer(username,password);
+                    System.out.printf(printMassage.REMOVE,username);
                 }
-            } else if (ConsoleCommand.LIST_USERS.getStringMatcher(command).matches()) {
-                System.out.println(controller.getPlayers());
-            }else if (ConsoleCommand.HELPREGISTERMENU.getStringMatcher(command).matches()) {
-                    System.out.println("register [username] [password]\n" +
-                            "login [username] [password]\n" +
-                            "remove [username] [password]\n" +
-                            "list_users\n" +
-                            "help\n" +
-                            "exit");
-            }else if (ConsoleCommand.REMOVE.getStringMatcher(command).matches()) {
-                Matcher matcher = ConsoleCommand.REMOVE.getStringMatcher(command);
-                if (matcher.find()) {
-                    String username = matcher.group(1);
-                    String password = matcher.group(2);
-                    if (!controller.playerIsExist(username)) {
-                        System.out.println("no user exists with this username");
-                    } else if (!controller.passwordCheck(username,password)) {
-                        System.out.println("incorrect password");
-                    } else {
-                        controller.removePlayer(username,password);
-                        System.out.println("remove " + username + " successfully");
-                    }
-                }
-                }
-            else {
-                System.out.println("Invalid Command");
             }
         }
+        else {
+            System.out.println(printMassage.INVALID_COMMAND);
+        }
+        return menuNum;
     }
 }

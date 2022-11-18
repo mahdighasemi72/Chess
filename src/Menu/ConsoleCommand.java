@@ -5,7 +5,6 @@ import java.util.regex.Pattern;
 
 public enum ConsoleCommand {
     REGISTER("(?i)register\\s+(.+)\\s+(.+)"),
-
     LOGIN("(?i)login\\s+(.+)\\s+(.+)"),
     REMOVE("(?i)remove\\s+(.+)\\s+(.+)"),
     LIST_USERS("(?i)list_users"),
