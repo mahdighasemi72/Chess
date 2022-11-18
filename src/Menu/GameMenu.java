@@ -1,5 +1,7 @@
 package Menu;
 
+import Menu.GameMenuProcess.MoveProcess;
+
 import java.util.HashMap;
 import java.util.Stack;
 import java.util.regex.Matcher;
@@ -7,31 +9,27 @@ import java.util.regex.Matcher;
 public class GameMenu {
     private Controller controller = Controller.getInstance() ;
     private PrintMassage printMassage;
-    private String loginUsername;
-    private String secondUsername;
+    private MoveProcess move;
     private String selectedName;
     private int selectedX;
     private int selectedY;
-    private boolean isWhiteTurn;
-    private int undo;
+    private boolean isWhiteTurn = true;
+    private int undo = 0;
     private HashMap<Integer,String> chessPositions ;
     private Stack<String> destroyedRivalPieces ;
     private Stack<String> moves ;//(pieceName,position,destinationPosition,enemy)
 
-    public GameMenu(String loginUsername, String secondUsername, PrintMassage printMassage) {
-        this.loginUsername = loginUsername;
-        this.secondUsername = secondUsername;
+    public GameMenu(PrintMassage printMassage) {
         this.printMassage = printMassage;
         chessPositions = new HashMap<Integer, String>();
         destroyedRivalPieces = new Stack<>();
         moves = new Stack<>();
+        move = new MoveProcess(chessPositions,destroyedRivalPieces,moves,printMassage);
+        makeFirstChessPositions();
     }
 
-    public int play(String command){
+    public int play(String command, String loginUsername, String secondUsername){
         int menuNum = 3;
-        makeFirstChessPositions();
-        undo = 0;
-        isWhiteTurn = true;
         menuNum = executeCommand(command);
         return menuNum;
     }
@@ -43,7 +41,7 @@ public class GameMenu {
         } else if (ConsoleCommand.DESELECT.getStringMatcher(command).matches()) {
             deselectProcess();
         } else if (ConsoleCommand.MOVE.getStringMatcher(command).matches()) {
-            movePrecess(command);
+            precessMoveCommand(command);
         } else if (ConsoleCommand.NEXT_TURN.getStringMatcher(command).matches()) {
             processNextTurn();
         } else if (ConsoleCommand.SHOW_TURN.getStringMatcher(command).matches()) {
@@ -90,7 +88,7 @@ public class GameMenu {
         }
     }
 
-    private void movePrecess(String command) {
+    private void precessMoveCommand(String command) {
         Matcher matcher = ConsoleCommand.MOVE.getStringMatcher(command);
         if (matcher.find()){
             int destinationY = Integer.parseInt(matcher.group(1));
@@ -100,7 +98,7 @@ public class GameMenu {
                 System.out.println(printMassage.ALREADY_MOVED);
             } else if (destinationY > 8 | destinationY== 0 | destinationX > 8 | destinationX == 0) {
                 System.out.println(printMassage.WRONG_COORDINATION);
-            } else if (selectedName.equals(null)) {
+            } else if (selectedName == null) {
                 System.out.println(printMassage.NOT_SELECTED);
             } else if (isYours(destinationPosition)) {
                 System.out.println(printMassage.CANNOT_MOVE);
@@ -111,7 +109,7 @@ public class GameMenu {
     }
 
     private void deselectProcess() {
-        if (selectedName.equals(null)){
+        if (selectedName == null){
             System.out.println(printMassage.NOT_SELECTED);
         }else {
             selectedName = null;
@@ -127,6 +125,8 @@ public class GameMenu {
             int position = (y*10) + x;
             if (y > 8 | y== 0 | x > 8 | x == 0){
                 System.out.println(printMassage.WRONG_COORDINATION);
+            } else if (!isWhiteTurn) {
+                System.out.println(printMassage.ALREADY_MOVED);
             } else if (positionValue(position) == null) {
                 System.out.println(printMassage.NO_PIECE_ON_THIS_SPOT);
             } else if (!isYours(position)){
@@ -278,7 +278,6 @@ public class GameMenu {
     }
 
     public void checkPath(String pieceName, int x, int y, int destinationX, int destinationY){
-        int position = (10*y) + x;
         int destinationPosition = (10*destinationY) + destinationX;
         if (pieceName.equals(printMassage.PW)){
             if (destinationX == x) {
@@ -287,7 +286,9 @@ public class GameMenu {
                         if (isBarrierOnPath(pieceName, x, y, destinationX, destinationY)){
                             System.out.println(printMassage.CANNOT_MOVE);
                         } else {
-                            move(pieceName, x, y, destinationX, destinationY);
+                            move.move(x, y, destinationX, destinationY);
+                            isWhiteTurn = false;
+                            selectedName = "";
                         }
                     } else {
                         System.out.println(printMassage.CANNOT_MOVE);
@@ -296,14 +297,18 @@ public class GameMenu {
                     if (isBarrierOnPath(pieceName, x, y, destinationX, destinationY))
                         System.out.println(printMassage.CANNOT_MOVE);
                     else{
-                        move(pieceName, x, y, destinationX, destinationY);
+                        move.move(x, y, destinationX, destinationY);
+                        isWhiteTurn = false;
+                        selectedName = "";
                     }
                 } else{
                     System.out.println(printMassage.CANNOT_MOVE);
                 }
             } else if (destinationX == x + 1 | destinationX == x - 1) {
                 if (!isYours(destinationPosition) & positionValue(destinationPosition) != null & destinationY == y+1){
-                    move(pieceName, x, y, destinationX, destinationY);
+                    move.move(x, y, destinationX, destinationY);
+                    isWhiteTurn = false;
+                    selectedName = "";
                 }
             }else {
                 System.out.println(printMassage.CANNOT_MOVE);
@@ -313,16 +318,22 @@ public class GameMenu {
                 if (isBarrierOnPath(pieceName, x, y, destinationX, destinationY))
                     System.out.println(printMassage.CANNOT_MOVE);
                 else {
-                    move(pieceName, x, y, destinationX, destinationY);
+                    move.move(x, y, destinationX, destinationY);
+                    isWhiteTurn = false;
+                    selectedName = "";
                 }
             } else {
                 System.out.println(printMassage.CANNOT_MOVE);
             }
         } else if (pieceName.equals(printMassage.NW)) {
             if (Math.abs(destinationY - y) == 2 & Math.abs(destinationX - x) == 1) {
-                move(pieceName, x, y, destinationX, destinationY);
+                move.move(x, y, destinationX, destinationY);
+                isWhiteTurn = false;
+                selectedName = "";
             } else if (Math.abs(destinationY - y) == 1 & Math.abs(destinationX - x) == 2) {
-                move(pieceName, x, y, destinationX, destinationY);
+                move.move(x, y, destinationX, destinationY);
+                isWhiteTurn = false;
+                selectedName = "";
             } else
                 System.out.println(printMassage.CANNOT_MOVE);
         } else if (pieceName.equals(printMassage.BW)) {
@@ -330,7 +341,9 @@ public class GameMenu {
                 if (isBarrierOnPath(pieceName,x,y,destinationX,destinationY)){
                     System.out.println(printMassage.CANNOT_MOVE);
                 }else {
-                    move(pieceName, x, y, destinationX, destinationY);
+                    move.move(x, y, destinationX, destinationY);
+                    isWhiteTurn = false;
+                    selectedName = "";
                 }
             } else
                 System.out.println(printMassage.CANNOT_MOVE);
@@ -339,46 +352,32 @@ public class GameMenu {
                 if (isBarrierOnPath(pieceName,x,y,destinationX,destinationY)){
                     System.out.println(printMassage.CANNOT_MOVE);
                 }else {
-                    move(pieceName, x, y, destinationX, destinationY);
+                    move.move(x, y, destinationX, destinationY);
+                    isWhiteTurn = false;
+                    selectedName = "";
                 }
             } else if (destinationX == x | destinationY == y){
                 if (isBarrierOnPath(pieceName, x, y, destinationX, destinationY))
                     System.out.println(printMassage.CANNOT_MOVE);
                 else {
-                    move(pieceName, x, y, destinationX, destinationY);
+                    move.move(x, y, destinationX, destinationY);
+                    isWhiteTurn = false;
+                    selectedName = "";
                 }
             } else {
                 System.out.println(printMassage.CANNOT_MOVE);
             }
         } else if (pieceName.equals(printMassage.KW)) {
             if (Math.abs(destinationX-x) < 2 & Math.abs(destinationY-y) < 2){
-                    move(pieceName, x, y, destinationX, destinationY);
+                move.move(x, y, destinationX, destinationY);
+                isWhiteTurn = false;
+                selectedName = "";
             } else {
                 System.out.println(printMassage.CANNOT_MOVE);
             }
         }
     }
-    private void move(String pieceName, int x, int y, int destinationX, int destinationY){
-        int position = (10*y) + x;
-        int destinationPosition = (10*destinationY) + destinationX;
-        if (positionValue(destinationPosition)==null){
-            chessPositions.put(destinationPosition, positionValue(position));
-            chessPositions.put(position, null);
-            isWhiteTurn = false;
-            System.out.println(printMassage.MOVED);
-            moves.push(pieceName + "," + String.valueOf(position) + "," + String.valueOf(destinationPosition) +
-                    "," + "");
-        } else {
-            String rivalPiece = positionValue(destinationPosition);
-            moves.push(pieceName + "," + String.valueOf(position) + "," + String.valueOf(destinationPosition) +
-                    "," + rivalPiece);
-            destroyedRivalPieces.push(rivalPiece);
-            chessPositions.put(destinationPosition, positionValue(position));
-            chessPositions.put(position, null);
-            isWhiteTurn = false;
-            System.out.println(printMassage.RIVAL_PIECE_DESTROYED);
-        }
-    }
+
     private void makeFirstChessPositions(){
         for (int i=1; i<9; i++){
             for (int j=1; j<9; j++){

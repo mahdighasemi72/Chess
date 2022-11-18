@@ -14,6 +14,7 @@ public class Main {
         String loginUsername = "";
         String secondUsername = "";
         RegisterMenu registerMenu = new RegisterMenu(printMassage);
+        GameMenu gameMenu = new GameMenu(printMassage);
         while (menuNum!=0){
             input = scanner.nextLine().trim();
             switch (menuNum) {
@@ -27,8 +28,7 @@ public class Main {
                     secondUsername = mainMenu.getSecondUsername();
                     break;
                 case 3 :
-                    GameMenu gameMenu = new GameMenu(loginUsername, secondUsername, printMassage);
-                    menuNum = gameMenu.play(input);
+                    menuNum = gameMenu.play(input, loginUsername, secondUsername);
                     break;
             }
         }
