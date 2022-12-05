@@ -21,6 +21,11 @@ public class MainMenu {
 
     public int makeGame(String command){
         int menuNum = 2;
+        menuNum = executeCommands(command, menuNum);
+        return menuNum;
+    }
+
+    private int executeCommands(String command, int menuNum) {
         if (ConsoleCommand.NEWGAME.getStringMatcher(command).matches()){
             Matcher matcher = ConsoleCommand.NEWGAME.getStringMatcher(command);
             if (matcher.find()){
