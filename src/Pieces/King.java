@@ -3,8 +3,6 @@ package Pieces;
 import java.awt.*;
 
 public class King extends Piece{
-    private final String symbol = "Kw";
-
     public King(String name, Point position) {
         super(name, position);
     }

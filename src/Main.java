@@ -1,4 +1,4 @@
-import Menu.GameMenu;
+import Menu.GameMenu.GameMenu;
 import Menu.MainMenu;
 import Menu.PrintMassage;
 import Menu.RegisterMenu;

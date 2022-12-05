@@ -1,7 +1,13 @@
-package Menu;
+package Menu.GameMenu;
 
-import Menu.GameMenuProcess.MoveProcess;
+import Menu.ConsoleCommand;
+import Menu.Controller;
+import Menu.GameMenu.GameMenuProcess.MoveProcess;
+import Menu.PrintMassage;
+import Pieces.*;
 
+import java.awt.*;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Stack;
 import java.util.regex.Matcher;
@@ -15,16 +21,17 @@ public class GameMenu {
     private int selectedY;
     private boolean isWhiteTurn = true;
     private int undo = 0;
-    private HashMap<Integer,String> chessPositions ;
+    private HashMap<Integer,String> chessPositions2;
+    private ArrayList<Piece> chessPlate;
     private Stack<String> destroyedRivalPieces ;
     private Stack<String> moves ;//(pieceName,position,destinationPosition,enemy)
 
     public GameMenu(PrintMassage printMassage) {
         this.printMassage = printMassage;
-        chessPositions = new HashMap<Integer, String>();
+        chessPositions2 = new HashMap<Integer, String>();
         destroyedRivalPieces = new Stack<>();
         moves = new Stack<>();
-        move = new MoveProcess(chessPositions,destroyedRivalPieces,moves,printMassage);
+        move = new MoveProcess(chessPositions2,destroyedRivalPieces,moves,printMassage);
         makeFirstChessPositions();
     }
 
@@ -37,9 +44,9 @@ public class GameMenu {
     private int executeCommand(String command) {
         int menuNum = 3;
         if (ConsoleCommand.SELECT.getStringMatcher(command).matches()){
-            selectProcess(command);
+            processSelect(command);
         } else if (ConsoleCommand.DESELECT.getStringMatcher(command).matches()) {
-            deselectProcess();
+            processDeselect();
         } else if (ConsoleCommand.MOVE.getStringMatcher(command).matches()) {
             precessMoveCommand(command);
         } else if (ConsoleCommand.NEXT_TURN.getStringMatcher(command).matches()) {
@@ -55,21 +62,25 @@ public class GameMenu {
     }
 
     private void processUndo() {
-        if (undo<3){
-            if (!isWhiteTurn){
-                String lastMove[] = moves.pop().split(",");
-                String pieceName = lastMove[0];
-                int position = Integer.parseInt(lastMove[1]);
-                int destinationPosition = Integer.parseInt(lastMove[2]);
-                String destinationValue = lastMove[3];
-                chessPositions.put(position,pieceName);
-                chessPositions.put(destinationPosition,destinationValue);
-                undo++;
-                System.out.println(printMassage.UNDO_COMPLETED);
-            } else
-                System.out.println(printMassage.MOVE_BEFORE_UNDO);
+        if (undo<=2){
+            processAllowedUndo();
         } else
             System.out.println(printMassage.CANNOT_UNDO_ANYMORE);
+    }
+
+    private void processAllowedUndo() {
+        if (!isWhiteTurn){
+            String lastMove[] = moves.pop().split(",");
+            String pieceName = lastMove[0];
+            int position = Integer.parseInt(lastMove[1]);
+            int destinationPosition = Integer.parseInt(lastMove[2]);
+            String destinationValue = lastMove[3];
+            chessPositions2.put(position,pieceName);
+            chessPositions2.put(destinationPosition,destinationValue);
+            undo++;
+            System.out.println(printMassage.UNDO_COMPLETED);
+        } else
+            System.out.println(printMassage.MOVE_BEFORE_UNDO);
     }
 
     private void processShowTurn() {
@@ -108,7 +119,7 @@ public class GameMenu {
         }
     }
 
-    private void deselectProcess() {
+    private void processDeselect() {
         if (selectedName == null){
             System.out.println(printMassage.NOT_SELECTED);
         }else {
@@ -117,7 +128,7 @@ public class GameMenu {
         }
     }
 
-    private void selectProcess(String command) {
+    private void processSelect(String command) {
         Matcher matcher = ConsoleCommand.SELECT.getStringMatcher(command);
         if (matcher.find()){
             int y = Integer.parseInt(matcher.group(1));
@@ -141,7 +152,7 @@ public class GameMenu {
     }
 
     private String positionValue(int position){
-        String selectedValue = chessPositions.get(position);
+        String selectedValue = chessPositions2.get(position);
         return selectedValue;
     }
     private boolean isYours(int position){
@@ -381,44 +392,108 @@ public class GameMenu {
     private void makeFirstChessPositions(){
         for (int i=1; i<9; i++){
             for (int j=1; j<9; j++){
-                chessPositions.put((i*10)+j, null);
+                chessPositions2.put((i*10)+j, null);
             }
         }
-        chessPositions.put(11,printMassage.RW);
-        chessPositions.put(12,printMassage.NW);
-        chessPositions.put(13,printMassage.BW);
-        chessPositions.put(14,printMassage.QW);
-        chessPositions.put(15,printMassage.KW);
-        chessPositions.put(16,printMassage.BW);
-        chessPositions.put(17,printMassage.NW);
-        chessPositions.put(18,printMassage.RW);
+        chessPositions2.put(11,printMassage.RW);
+        chessPositions2.put(12,printMassage.NW);
+        chessPositions2.put(13,printMassage.BW);
+        chessPositions2.put(14,printMassage.QW);
+        chessPositions2.put(15,printMassage.KW);
+        chessPositions2.put(16,printMassage.BW);
+        chessPositions2.put(17,printMassage.NW);
+        chessPositions2.put(18,printMassage.RW);
 
-        chessPositions.put(21,printMassage.PW);
-        chessPositions.put(22,printMassage.PW);
-        chessPositions.put(23,printMassage.PW);
-        chessPositions.put(24,printMassage.PW);
-        chessPositions.put(25,printMassage.PW);
-        chessPositions.put(26,printMassage.PW);
-        chessPositions.put(27,printMassage.PW);
-        chessPositions.put(28,printMassage.PW);
+        chessPositions2.put(21,printMassage.PW);
+        chessPositions2.put(22,printMassage.PW);
+        chessPositions2.put(23,printMassage.PW);
+        chessPositions2.put(24,printMassage.PW);
+        chessPositions2.put(25,printMassage.PW);
+        chessPositions2.put(26,printMassage.PW);
+        chessPositions2.put(27,printMassage.PW);
+        chessPositions2.put(28,printMassage.PW);
 
-        chessPositions.put(71,printMassage.PB);
-        chessPositions.put(72,printMassage.PB);
-        chessPositions.put(73,printMassage.PB);
-        chessPositions.put(74,printMassage.PB);
-        chessPositions.put(75,printMassage.PB);
-        chessPositions.put(76,printMassage.PB);
-        chessPositions.put(77,printMassage.PB);
-        chessPositions.put(78,printMassage.PB);
+        chessPositions2.put(71,printMassage.PB);
+        chessPositions2.put(72,printMassage.PB);
+        chessPositions2.put(73,printMassage.PB);
+        chessPositions2.put(74,printMassage.PB);
+        chessPositions2.put(75,printMassage.PB);
+        chessPositions2.put(76,printMassage.PB);
+        chessPositions2.put(77,printMassage.PB);
+        chessPositions2.put(78,printMassage.PB);
 
-        chessPositions.put(81,printMassage.RB);
-        chessPositions.put(82,printMassage.NB);
-        chessPositions.put(83,printMassage.BB);
-        chessPositions.put(84,printMassage.QB);
-        chessPositions.put(85,printMassage.KB);
-        chessPositions.put(86,printMassage.BB);
-        chessPositions.put(87,printMassage.NB);
-        chessPositions.put(88,printMassage.RB);
+        chessPositions2.put(81,printMassage.RB);
+        chessPositions2.put(82,printMassage.NB);
+        chessPositions2.put(83,printMassage.BB);
+        chessPositions2.put(84,printMassage.QB);
+        chessPositions2.put(85,printMassage.KB);
+        chessPositions2.put(86,printMassage.BB);
+        chessPositions2.put(87,printMassage.NB);
+        chessPositions2.put(88,printMassage.RB);
+    }
+    private ArrayList<Piece> makeFirstChessPlate(){
+        ArrayList<Piece> firstChessPlate = new ArrayList<>();
+        for (int i=1; i<=8; i++){
+            Point position = new Point(i,2);
+            Soldier whiteSoldier = new Soldier("Pw", position);
+            firstChessPlate.add(whiteSoldier);
+        }
+        Point whiteCastlePosition1 = new Point(1,1);
+        Castle whiteCastle1 = new Castle("Rw", whiteCastlePosition1);
+        firstChessPlate.add(whiteCastle1);
+        Point whiteCastlePosition2 = new Point(8,1);
+        Castle whiteCastle2 = new Castle("Rw", whiteCastlePosition2);
+        firstChessPlate.add(whiteCastle2);
+        Point whiteHorsePosition1 = new Point(2,1);
+        Horse whiteHorse1 = new Horse("Nw", whiteHorsePosition1);
+        firstChessPlate.add(whiteHorse1);
+        Point whiteHorsePosition2 = new Point(7,1);
+        Horse whiteHorse2 = new Horse("Nw", whiteHorsePosition2);
+        firstChessPlate.add(whiteHorse2);
+        Point whiteElephantPosition1 = new Point(3,1);
+        Elephant whiteElephant1 = new Elephant("Bw", whiteElephantPosition1);
+        firstChessPlate.add(whiteElephant1);
+        Point whiteElephantPosition2 = new Point(6,1);
+        Elephant whiteElephant2 = new Elephant("Bw", whiteElephantPosition2);
+        firstChessPlate.add(whiteElephant2);
+        Point whiteQueenPosition = new Point(4,1);
+        Queen whiteQueen = new Queen("Qw",whiteQueenPosition);
+        firstChessPlate.add(whiteQueen);
+        Point whiteKingPosition = new Point(5,1);
+        King whiteKing = new King("Kw", whiteKingPosition);
+        firstChessPlate.add(whiteKing);
+
+        for (int i=1; i<=8; i++){
+            Point position = new Point(i,7);
+            Soldier blackSoldier = new Soldier("Pb", position);
+            firstChessPlate.add(blackSoldier);
+        }
+        Point blackCastlePosition1 = new Point(1,8);
+        Castle blackCastle1 = new Castle("Rb", blackCastlePosition1);
+        firstChessPlate.add(blackCastle1);
+        Point blackCastlePosition2 = new Point(8,8);
+        Castle blackCastle2 = new Castle("Rb", blackCastlePosition2);
+        firstChessPlate.add(blackCastle2);
+        Point blackHorsePosition1 = new Point(2,8);
+        Horse blackHorse1 = new Horse("Nb", blackHorsePosition1);
+        firstChessPlate.add(blackHorse1);
+        Point blackHorsePosition2 = new Point(7,8);
+        Horse blackHorse2 = new Horse("Nb", blackHorsePosition2);
+        firstChessPlate.add(blackHorse2);
+        Point blackElephantPosition1 = new Point(3,8);
+        Elephant blackElephant1 = new Elephant("Bb", blackElephantPosition1);
+        firstChessPlate.add(blackElephant1);
+        Point blackElephantPosition2 = new Point(6,8);
+        Elephant blackElephant2 = new Elephant("Bb", blackElephantPosition2);
+        firstChessPlate.add(blackElephant2);
+        Point blackQueenPosition = new Point(4,8);
+        Queen blackQueen = new Queen("Qb",blackQueenPosition);
+        firstChessPlate.add(blackQueen);
+        Point blackKingPosition = new Point(5,8);
+        King blackKing = new King("Kb", blackKingPosition);
+        firstChessPlate.add(blackKing);
+
+        return firstChessPlate;
     }
 }
 

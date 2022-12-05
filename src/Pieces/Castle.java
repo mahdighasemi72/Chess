@@ -3,8 +3,6 @@ package Pieces;
 import java.awt.*;
 
 public class Castle extends Piece {
-    private final String symbol = "Rw";
-
     public Castle(String name, Point position) {
         super(name, position);
     }

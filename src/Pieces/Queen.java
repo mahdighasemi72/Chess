@@ -3,7 +3,6 @@ package Pieces;
 import java.awt.*;
 
 public class Queen extends Piece{
-    private final String symbol = "Qw";
     public Queen(String name, Point position) {
         super(name, position);
     }

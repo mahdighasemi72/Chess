@@ -3,8 +3,6 @@ package Pieces;
 import java.awt.*;
 
 public class Horse extends Piece{
-    private final String symbol = "Nw";
-
     public Horse(String name, Point position) {
         super(name, position);
     }

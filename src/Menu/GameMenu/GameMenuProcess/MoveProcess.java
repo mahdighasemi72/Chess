@@ -1,4 +1,4 @@
-package Menu.GameMenuProcess;
+package Menu.GameMenu.GameMenuProcess;
 
 import Menu.PrintMassage;
 

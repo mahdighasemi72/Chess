@@ -3,8 +3,6 @@ package Pieces;
 import java.awt.*;
 
 public class Soldier extends Piece {
-    private final String symbol = "Pw";
-
     public Soldier(String name, Point position) {
         super(name, position);
     }

@@ -3,8 +3,6 @@ package Pieces;
 import java.awt.*;
 
 public class Elephant extends Piece{
-    private final String symbol = "Bw";
-
     public Elephant(String name, Point position) {
         super(name, position);
     }
