@@ -11,7 +11,7 @@ public class Queen extends Piece{
             return true;
         } else if (destination.y == start.y) {
             return true;
-        } else if (Math.sqrt(destination.x - start.x) == Math.sqrt(destination.y - start.y)){
+        } else if (Math.abs(destination.x - start.x) == Math.abs(destination.y - start.y)){
             return true;
         }
         return false;

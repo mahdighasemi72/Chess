@@ -1,19 +1,21 @@
 package Menu.GameMenu.GameMenuProcess;
 
 import Menu.PrintMassage;
+import Pieces.Piece;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Stack;
 
 public class MoveProcess {
     private PrintMassage printMassage;
-    private HashMap<Integer,String> chessPositions ;
+    private ArrayList<Piece> chessPlate;
     private Stack<String> destroyedRivalPieces ;
     private Stack<String> moves ;
 
-    public MoveProcess(HashMap<Integer, String> chessPositions, Stack<String> destroyedRivalPieces, Stack<String> moves, PrintMassage printMassage) {
+    public MoveProcess(ArrayList<Piece> chessPlate, Stack<String> destroyedRivalPieces, Stack<String> moves, PrintMassage printMassage) {
         this.printMassage = printMassage;
-        this.chessPositions = chessPositions;
+        this.chessPlate = chessPlate;
         this.destroyedRivalPieces = destroyedRivalPieces;
         this.moves = moves;
     }

@@ -7,11 +7,11 @@ public class Horse extends Piece{
         super(name, position);
     }
     public boolean isCorrectPath(Point start, Point destination){
-        if (Math.sqrt(destination.y - start.y) == 2){
-            if (Math.sqrt(destination.x - start.x) == 1)
+        if (Math.abs(destination.y - start.y) == 2){
+            if (Math.abs(destination.x - start.x) == 1)
                 return true;
-        } else if (Math.sqrt(destination.x - start.x) == 2) {
-            if (Math.sqrt(destination.y - start.y) == 1)
+        } else if (Math.abs(destination.x - start.x) == 2) {
+            if (Math.abs(destination.y - start.y) == 1)
                 return true;
         }
         return false;

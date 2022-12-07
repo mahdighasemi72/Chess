@@ -7,7 +7,7 @@ public class King extends Piece{
         super(name, position);
     }
     public boolean isCorrectPath(Point start, Point destination){
-        if (Math.sqrt(destination.x - start.x) <= 1 && Math.sqrt(destination.y - start.y) <= 1)
+        if (Math.abs(destination.x - start.x) <= 1 && Math.abs(destination.y - start.y) <= 1)
             return true;
         return false;
     }

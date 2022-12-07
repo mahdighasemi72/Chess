@@ -8,7 +8,7 @@ public class Elephant extends Piece{
     }
 
     public boolean isCorrectPath (Point start, Point destination){
-        if (Math.sqrt(destination.x - start.x) == Math.sqrt(destination.y - start.y)){
+        if (Math.abs(destination.x - start.x) == Math.abs(destination.y - start.y)){
             return true;
         }
         return false;

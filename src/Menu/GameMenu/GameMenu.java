@@ -3,6 +3,7 @@ package Menu.GameMenu;
 import Menu.ConsoleCommand;
 import Menu.Controller;
 import Menu.GameMenu.GameMenuProcess.MoveProcess;
+import Menu.GameMenu.GameMenuProcess.Plate;
 import Menu.PrintMassage;
 import Pieces.*;
 
@@ -16,23 +17,25 @@ public class GameMenu {
     private Controller controller = Controller.getInstance() ;
     private PrintMassage printMassage;
     private MoveProcess move;
-    private String selectedName;
+    private Piece selected;
     private int selectedX;
     private int selectedY;
     private boolean isWhiteTurn = true;
     private int undo = 0;
-    private HashMap<Integer,String> chessPositions2;
+//    private HashMap<Integer,String> chessPositions2;
+    private Plate plate;
     private ArrayList<Piece> chessPlate;
     private Stack<String> destroyedRivalPieces ;
     private Stack<String> moves ;//(pieceName,position,destinationPosition,enemy)
 
     public GameMenu(PrintMassage printMassage) {
         this.printMassage = printMassage;
-        chessPositions2 = new HashMap<Integer, String>();
+//        chessPositions2 = new HashMap<Integer, String>();
         destroyedRivalPieces = new Stack<>();
         moves = new Stack<>();
-        move = new MoveProcess(chessPositions2,destroyedRivalPieces,moves,printMassage);
-        makeFirstChessPositions();
+        chessPlate = plate.makeFirstChessPlate();
+        move = new MoveProcess(chessPlate,destroyedRivalPieces,moves,printMassage);
+//        makeFirstChessPositions();
     }
 
     public int play(String command, String loginUsername, String secondUsername){
@@ -104,14 +107,14 @@ public class GameMenu {
         if (matcher.find()){
             int destinationY = Integer.parseInt(matcher.group(1));
             int destinationX = Integer.parseInt(matcher.group(2));
-            int destinationPosition = (destinationY*10) + destinationX;
+//            int destinationPosition = (destinationY*10) + destinationX;
             if (!isWhiteTurn){
                 System.out.println(printMassage.ALREADY_MOVED);
             } else if (destinationY > 8 | destinationY== 0 | destinationX > 8 | destinationX == 0) {
                 System.out.println(printMassage.WRONG_COORDINATION);
-            } else if (selectedName == null) {
+            } else if (selected == null) {
                 System.out.println(printMassage.NOT_SELECTED);
-            } else if (isYours(destinationPosition)) {
+            } else if (isYours(destinationX,destinationY)) {
                 System.out.println(printMassage.CANNOT_MOVE);
             } else {
                 checkPath(selectedName,selectedX,selectedY,destinationX,destinationY);
@@ -120,12 +123,23 @@ public class GameMenu {
     }
 
     private void processDeselect() {
-        if (selectedName == null){
+        if (selected == null){
             System.out.println(printMassage.NOT_SELECTED);
         }else {
-            selectedName = null;
+            selected = null;
             System.out.println(printMassage.DESELECTED);
         }
+    }
+
+    private Piece selectedPiece(int x, int y){
+        Piece selectedPiece;
+        for (Piece piece : chessPlate) {
+            if (piece.getPosition().x == x && piece.getPosition().y == y){
+                selectedPiece = piece;
+                return selectedPiece;
+            }
+        }
+        return null;
     }
 
     private void processSelect(String command) {
@@ -133,17 +147,16 @@ public class GameMenu {
         if (matcher.find()){
             int y = Integer.parseInt(matcher.group(1));
             int x = Integer.parseInt(matcher.group(2));
-            int position = (y*10) + x;
             if (y > 8 | y== 0 | x > 8 | x == 0){
                 System.out.println(printMassage.WRONG_COORDINATION);
             } else if (!isWhiteTurn) {
                 System.out.println(printMassage.ALREADY_MOVED);
-            } else if (positionValue(position) == null) {
+            } else if (selectedPiece(x,y) == null) {
                 System.out.println(printMassage.NO_PIECE_ON_THIS_SPOT);
-            } else if (!isYours(position)){
+            } else if (!isYours(x, y)){
                 System.out.println(printMassage.SELECT_YOUR_PIECE);
             }else {
-                selectedName = positionValue(position);
+                selected = selectedPiece(x,y);
                 selectedX = x;
                 selectedY = y;
                 System.out.println(printMassage.SELECTED);
@@ -151,21 +164,23 @@ public class GameMenu {
         }
     }
 
-    private String positionValue(int position){
-        String selectedValue = chessPositions2.get(position);
-        return selectedValue;
-    }
-    private boolean isYours(int position){
-        if (positionValue(position) == printMassage.PW | positionValue(position)== printMassage.RW |
-                positionValue(position)== printMassage.NW | positionValue(position)== printMassage.BW |
-                positionValue(position)== printMassage.KW | positionValue(position)== printMassage.QW){
+//    private String positionValue(int position){
+//        String selectedValue = chessPositions2.get(position);
+//        return selectedValue;
+//    }
+    private boolean isYours(int x, int y){
+        Piece selectedPiece = selectedPiece(x,y);
+        String selectedPieceName = selectedPiece.getName();
+        if (selectedPieceName == printMassage.PW || selectedPieceName == printMassage.RW ||
+                selectedPieceName == printMassage.NW ||selectedPieceName == printMassage.BW ||
+                selectedPieceName == printMassage.QW ||selectedPieceName == printMassage.KW)
+        {
             return true;
-        }else {
-            return false;
         }
+        return false;
     }
-    private boolean isBarrierOnPath(String pieceName, int x, int y, int destinationX, int destinationY){
-        int destinationPosition = (destinationY*10) + destinationX;
+    private boolean isBarrierOnPath(Piece piece, int x, int y, int destinationX, int destinationY){
+        String pieceName = piece.getName();
         if (pieceName.equals(printMassage.PW)) {
             if (y == 2){
                 if (destinationY == 3){
@@ -389,112 +404,48 @@ public class GameMenu {
         }
     }
 
-    private void makeFirstChessPositions(){
-        for (int i=1; i<9; i++){
-            for (int j=1; j<9; j++){
-                chessPositions2.put((i*10)+j, null);
-            }
-        }
-        chessPositions2.put(11,printMassage.RW);
-        chessPositions2.put(12,printMassage.NW);
-        chessPositions2.put(13,printMassage.BW);
-        chessPositions2.put(14,printMassage.QW);
-        chessPositions2.put(15,printMassage.KW);
-        chessPositions2.put(16,printMassage.BW);
-        chessPositions2.put(17,printMassage.NW);
-        chessPositions2.put(18,printMassage.RW);
-
-        chessPositions2.put(21,printMassage.PW);
-        chessPositions2.put(22,printMassage.PW);
-        chessPositions2.put(23,printMassage.PW);
-        chessPositions2.put(24,printMassage.PW);
-        chessPositions2.put(25,printMassage.PW);
-        chessPositions2.put(26,printMassage.PW);
-        chessPositions2.put(27,printMassage.PW);
-        chessPositions2.put(28,printMassage.PW);
-
-        chessPositions2.put(71,printMassage.PB);
-        chessPositions2.put(72,printMassage.PB);
-        chessPositions2.put(73,printMassage.PB);
-        chessPositions2.put(74,printMassage.PB);
-        chessPositions2.put(75,printMassage.PB);
-        chessPositions2.put(76,printMassage.PB);
-        chessPositions2.put(77,printMassage.PB);
-        chessPositions2.put(78,printMassage.PB);
-
-        chessPositions2.put(81,printMassage.RB);
-        chessPositions2.put(82,printMassage.NB);
-        chessPositions2.put(83,printMassage.BB);
-        chessPositions2.put(84,printMassage.QB);
-        chessPositions2.put(85,printMassage.KB);
-        chessPositions2.put(86,printMassage.BB);
-        chessPositions2.put(87,printMassage.NB);
-        chessPositions2.put(88,printMassage.RB);
-    }
-    private ArrayList<Piece> makeFirstChessPlate(){
-        ArrayList<Piece> firstChessPlate = new ArrayList<>();
-        for (int i=1; i<=8; i++){
-            Point position = new Point(i,2);
-            Soldier whiteSoldier = new Soldier("Pw", position);
-            firstChessPlate.add(whiteSoldier);
-        }
-        Point whiteCastlePosition1 = new Point(1,1);
-        Castle whiteCastle1 = new Castle("Rw", whiteCastlePosition1);
-        firstChessPlate.add(whiteCastle1);
-        Point whiteCastlePosition2 = new Point(8,1);
-        Castle whiteCastle2 = new Castle("Rw", whiteCastlePosition2);
-        firstChessPlate.add(whiteCastle2);
-        Point whiteHorsePosition1 = new Point(2,1);
-        Horse whiteHorse1 = new Horse("Nw", whiteHorsePosition1);
-        firstChessPlate.add(whiteHorse1);
-        Point whiteHorsePosition2 = new Point(7,1);
-        Horse whiteHorse2 = new Horse("Nw", whiteHorsePosition2);
-        firstChessPlate.add(whiteHorse2);
-        Point whiteElephantPosition1 = new Point(3,1);
-        Elephant whiteElephant1 = new Elephant("Bw", whiteElephantPosition1);
-        firstChessPlate.add(whiteElephant1);
-        Point whiteElephantPosition2 = new Point(6,1);
-        Elephant whiteElephant2 = new Elephant("Bw", whiteElephantPosition2);
-        firstChessPlate.add(whiteElephant2);
-        Point whiteQueenPosition = new Point(4,1);
-        Queen whiteQueen = new Queen("Qw",whiteQueenPosition);
-        firstChessPlate.add(whiteQueen);
-        Point whiteKingPosition = new Point(5,1);
-        King whiteKing = new King("Kw", whiteKingPosition);
-        firstChessPlate.add(whiteKing);
-
-        for (int i=1; i<=8; i++){
-            Point position = new Point(i,7);
-            Soldier blackSoldier = new Soldier("Pb", position);
-            firstChessPlate.add(blackSoldier);
-        }
-        Point blackCastlePosition1 = new Point(1,8);
-        Castle blackCastle1 = new Castle("Rb", blackCastlePosition1);
-        firstChessPlate.add(blackCastle1);
-        Point blackCastlePosition2 = new Point(8,8);
-        Castle blackCastle2 = new Castle("Rb", blackCastlePosition2);
-        firstChessPlate.add(blackCastle2);
-        Point blackHorsePosition1 = new Point(2,8);
-        Horse blackHorse1 = new Horse("Nb", blackHorsePosition1);
-        firstChessPlate.add(blackHorse1);
-        Point blackHorsePosition2 = new Point(7,8);
-        Horse blackHorse2 = new Horse("Nb", blackHorsePosition2);
-        firstChessPlate.add(blackHorse2);
-        Point blackElephantPosition1 = new Point(3,8);
-        Elephant blackElephant1 = new Elephant("Bb", blackElephantPosition1);
-        firstChessPlate.add(blackElephant1);
-        Point blackElephantPosition2 = new Point(6,8);
-        Elephant blackElephant2 = new Elephant("Bb", blackElephantPosition2);
-        firstChessPlate.add(blackElephant2);
-        Point blackQueenPosition = new Point(4,8);
-        Queen blackQueen = new Queen("Qb",blackQueenPosition);
-        firstChessPlate.add(blackQueen);
-        Point blackKingPosition = new Point(5,8);
-        King blackKing = new King("Kb", blackKingPosition);
-        firstChessPlate.add(blackKing);
-
-        return firstChessPlate;
-    }
+//    private void makeFirstChessPositions(){
+//        for (int i=1; i<9; i++){
+//            for (int j=1; j<9; j++){
+//                chessPositions2.put((i*10)+j, null);
+//            }
+//        }
+//        chessPositions2.put(11,printMassage.RW);
+//        chessPositions2.put(12,printMassage.NW);
+//        chessPositions2.put(13,printMassage.BW);
+//        chessPositions2.put(14,printMassage.QW);
+//        chessPositions2.put(15,printMassage.KW);
+//        chessPositions2.put(16,printMassage.BW);
+//        chessPositions2.put(17,printMassage.NW);
+//        chessPositions2.put(18,printMassage.RW);
+//
+//        chessPositions2.put(21,printMassage.PW);
+//        chessPositions2.put(22,printMassage.PW);
+//        chessPositions2.put(23,printMassage.PW);
+//        chessPositions2.put(24,printMassage.PW);
+//        chessPositions2.put(25,printMassage.PW);
+//        chessPositions2.put(26,printMassage.PW);
+//        chessPositions2.put(27,printMassage.PW);
+//        chessPositions2.put(28,printMassage.PW);
+//
+//        chessPositions2.put(71,printMassage.PB);
+//        chessPositions2.put(72,printMassage.PB);
+//        chessPositions2.put(73,printMassage.PB);
+//        chessPositions2.put(74,printMassage.PB);
+//        chessPositions2.put(75,printMassage.PB);
+//        chessPositions2.put(76,printMassage.PB);
+//        chessPositions2.put(77,printMassage.PB);
+//        chessPositions2.put(78,printMassage.PB);
+//
+//        chessPositions2.put(81,printMassage.RB);
+//        chessPositions2.put(82,printMassage.NB);
+//        chessPositions2.put(83,printMassage.BB);
+//        chessPositions2.put(84,printMassage.QB);
+//        chessPositions2.put(85,printMassage.KB);
+//        chessPositions2.put(86,printMassage.BB);
+//        chessPositions2.put(87,printMassage.NB);
+//        chessPositions2.put(88,printMassage.RB);
+//    }
 }
 
 
