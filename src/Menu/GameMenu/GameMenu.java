@@ -7,9 +7,7 @@ import Menu.GameMenu.GameMenuProcess.Plate;
 import Menu.PrintMassage;
 import Pieces.*;
 
-import java.awt.*;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Stack;
 import java.util.regex.Matcher;
 
@@ -117,7 +115,7 @@ public class GameMenu {
             } else if (isYours(destinationX,destinationY)) {
                 System.out.println(printMassage.CANNOT_MOVE);
             } else {
-                checkPath(selectedName,selectedX,selectedY,destinationX,destinationY);
+                checkPath(selected,selectedX,selectedY,destinationX,destinationY);
             }
         }
     }
@@ -303,105 +301,91 @@ public class GameMenu {
         return false;
     }
 
-    public void checkPath(String pieceName, int x, int y, int destinationX, int destinationY){
-        int destinationPosition = (10*destinationY) + destinationX;
+    public void checkPath(Piece piece, int x, int y, int destinationX, int destinationY){
+        String pieceName = piece.getName();
         if (pieceName.equals(printMassage.PW)){
             if (destinationX == x) {
                 if (y == 2){
                     if (destinationY == 3 | destinationY == 4){
-                        if (isBarrierOnPath(pieceName, x, y, destinationX, destinationY)){
+                        if (isBarrierOnPath(piece, x, y, destinationX, destinationY)){
                             System.out.println(printMassage.CANNOT_MOVE);
                         } else {
-                            move.move(x, y, destinationX, destinationY);
-                            isWhiteTurn = false;
-                            selectedName = "";
+                            setMoveVarriables(x, y, destinationX, destinationY);
                         }
                     } else {
                         System.out.println(printMassage.CANNOT_MOVE);
                     }
                 } else if (destinationY == y+1){
-                    if (isBarrierOnPath(pieceName, x, y, destinationX, destinationY))
+                    if (isBarrierOnPath(piece, x, y, destinationX, destinationY))
                         System.out.println(printMassage.CANNOT_MOVE);
                     else{
-                        move.move(x, y, destinationX, destinationY);
-                        isWhiteTurn = false;
-                        selectedName = "";
+                        setMoveVarriables(x, y, destinationX, destinationY);
                     }
                 } else{
                     System.out.println(printMassage.CANNOT_MOVE);
                 }
             } else if (destinationX == x + 1 | destinationX == x - 1) {
-                if (!isYours(destinationPosition) & positionValue(destinationPosition) != null & destinationY == y+1){
-                    move.move(x, y, destinationX, destinationY);
-                    isWhiteTurn = false;
-                    selectedName = "";
+                if (!isYours(destinationX,destinationY) & selectedPiece(destinationX,destinationY) != null & destinationY == y+1){
+                    setMoveVarriables(x, y, destinationX, destinationY);
                 }
             }else {
                 System.out.println(printMassage.CANNOT_MOVE);
             }
         } else if (pieceName.equals(printMassage.RW)){
             if (destinationX == x | destinationY == y){
-                if (isBarrierOnPath(pieceName, x, y, destinationX, destinationY))
+                if (isBarrierOnPath(piece, x, y, destinationX, destinationY))
                     System.out.println(printMassage.CANNOT_MOVE);
                 else {
-                    move.move(x, y, destinationX, destinationY);
-                    isWhiteTurn = false;
-                    selectedName = "";
+                    setMoveVarriables(x, y, destinationX, destinationY);
                 }
             } else {
                 System.out.println(printMassage.CANNOT_MOVE);
             }
         } else if (pieceName.equals(printMassage.NW)) {
             if (Math.abs(destinationY - y) == 2 & Math.abs(destinationX - x) == 1) {
-                move.move(x, y, destinationX, destinationY);
-                isWhiteTurn = false;
-                selectedName = "";
+                setMoveVarriables(x, y, destinationX, destinationY);
             } else if (Math.abs(destinationY - y) == 1 & Math.abs(destinationX - x) == 2) {
-                move.move(x, y, destinationX, destinationY);
-                isWhiteTurn = false;
-                selectedName = "";
+                setMoveVarriables(x, y, destinationX, destinationY);
             } else
                 System.out.println(printMassage.CANNOT_MOVE);
         } else if (pieceName.equals(printMassage.BW)) {
             if (Math.abs(destinationY-y) == Math.abs(destinationX-x)){
-                if (isBarrierOnPath(pieceName,x,y,destinationX,destinationY)){
+                if (isBarrierOnPath(piece,x,y,destinationX,destinationY)){
                     System.out.println(printMassage.CANNOT_MOVE);
                 }else {
-                    move.move(x, y, destinationX, destinationY);
-                    isWhiteTurn = false;
-                    selectedName = "";
+                    setMoveVarriables(x, y, destinationX, destinationY);
                 }
             } else
                 System.out.println(printMassage.CANNOT_MOVE);
         } else if (pieceName.equals(printMassage.QW)) {
             if (Math.abs(destinationY-y) == Math.abs(destinationX-x)){
-                if (isBarrierOnPath(pieceName,x,y,destinationX,destinationY)){
+                if (isBarrierOnPath(piece,x,y,destinationX,destinationY)){
                     System.out.println(printMassage.CANNOT_MOVE);
                 }else {
-                    move.move(x, y, destinationX, destinationY);
-                    isWhiteTurn = false;
-                    selectedName = "";
+                    setMoveVarriables(x, y, destinationX, destinationY);
                 }
             } else if (destinationX == x | destinationY == y){
-                if (isBarrierOnPath(pieceName, x, y, destinationX, destinationY))
+                if (isBarrierOnPath(piece, x, y, destinationX, destinationY))
                     System.out.println(printMassage.CANNOT_MOVE);
                 else {
-                    move.move(x, y, destinationX, destinationY);
-                    isWhiteTurn = false;
-                    selectedName = "";
+                    setMoveVarriables(x, y, destinationX, destinationY);
                 }
             } else {
                 System.out.println(printMassage.CANNOT_MOVE);
             }
         } else if (pieceName.equals(printMassage.KW)) {
             if (Math.abs(destinationX-x) < 2 & Math.abs(destinationY-y) < 2){
-                move.move(x, y, destinationX, destinationY);
-                isWhiteTurn = false;
-                selectedName = "";
+                setMoveVarriables(x, y, destinationX, destinationY);
             } else {
                 System.out.println(printMassage.CANNOT_MOVE);
             }
         }
+    }
+
+    private void setMoveVarriables(int x, int y, int destinationX, int destinationY) {
+        move.move(x, y, destinationX, destinationY);
+        isWhiteTurn = false;
+        selected = null;
     }
 
 //    private void makeFirstChessPositions(){
