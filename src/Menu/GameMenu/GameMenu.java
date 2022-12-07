@@ -184,16 +184,16 @@ public class GameMenu {
         if (pieceName.equals(printMassage.PW)) {
             if (y == 2){
                 if (destinationY == 3){
-                    if (positionValue(destinationPosition)!= null){
+                    if (selectedPiece(destinationX,destinationY)!= null){
                         return true;
                     }
                 } else if (destinationY == 4){
-                    if (positionValue(destinationPosition)!= null | positionValue(30+x)!= null){
+                    if (selectedPiece(destinationX,destinationY)!= null | selectedPiece(x,3)!= null){
                         return true;
                     }
                 }
             } else {
-                if (positionValue(destinationPosition)!= null){
+                if (selectedPiece(destinationX,destinationY)!= null){
                     return true;
                 }
             }
@@ -201,13 +201,13 @@ public class GameMenu {
             if (destinationX == x ){
                 if (destinationY > y){
                     for (int i=1; i< Math.abs(destinationY-y); i++){
-                        if(positionValue(10*(y+i) + x )!= null){
+                        if(selectedPiece(x, y+i)!= null){
                             return true;
                         }
                     }
                 } else {
                     for (int i=1; i< Math.abs(destinationY-y); i++){
-                        if(positionValue(10*(y-i) + x )!= null){
+                        if(selectedPiece(x, y-i)!= null){
                             return true;
                         }
                     }
@@ -215,13 +215,13 @@ public class GameMenu {
             }else if (destinationY == y){
                 if (destinationX > x){
                     for (int i=1; i< Math.abs(destinationX-x); i++){
-                        if(positionValue(10*(y) + (x+i))!= null){
+                        if(selectedPiece(x+1, y)!= null){
                             return true;
                         }
                     }
                 } else {
                     for (int i=1; i< Math.abs(destinationX-x); i++){
-                        if(positionValue(10*(y) + (x-i))!= null){
+                        if(selectedPiece(x-i, y)!= null){
                             return true;
                         }
                     }
@@ -230,56 +230,56 @@ public class GameMenu {
         } else if (pieceName.equals(printMassage.BW)) {
             if (destinationX > x & destinationY > y) {
                 for (int i = 1; i < Math.abs(destinationX - x); i++) {
-                    if (positionValue((10 * (y + i)) + (x + i))!= null)
+                    if (selectedPiece(x+i,y+i)!= null)
                         return true;
                 }
             } else if (destinationX > x & destinationY < y) {
                 for (int i = 1; i < Math.abs(destinationX - x); i++) {
-                    if (positionValue((10 * (y - i)) + (x + i))!= null)
+                    if (selectedPiece(x+i,y-i)!= null)
                         return true;
                 }
             } else if (destinationX < x & destinationY > y) {
                 for (int i = 1; i < Math.abs(destinationX - x); i++) {
-                    if (positionValue((10 * (y + i)) + (x - i))!= null)
+                    if (selectedPiece(x-i,y+i)!= null)
                         return true;
                 }
             } else if (destinationX < x & destinationY < y) {
                 for (int i = 1; i < Math.abs(destinationX - x); i++) {
-                    if (positionValue((10 * (y - i)) + (x - i))!= null)
+                    if (selectedPiece(x-i,y-i)!= null)
                         return true;
                 }
             }
         }else if (pieceName.equals(printMassage.QW)) {
                 if (destinationX > x & destinationY > y){
                     for (int i=1; i< Math.abs(destinationX-x); i++) {
-                        if (positionValue((10 * (y + i)) + (x + i))!= null)
+                        if (selectedPiece(x+i,y+i)!= null)
                             return true;
                     }
                 } else if (destinationX > x & destinationY < y) {
                     for (int i=1; i< Math.abs(destinationX-x); i++) {
-                        if (positionValue((10 * (y - i)) + (x + i))!= null)
+                        if (selectedPiece(x+i,y-i)!= null)
                             return true;
                     }
                 } else if (destinationX < x & destinationY > y) {
                     for (int i=1; i< Math.abs(destinationX-x); i++) {
-                        if (positionValue((10 * (y + i)) + (x - i))!= null)
+                        if (selectedPiece(x-i,y+i)!= null)
                             return true;
                     }
                 } else if (destinationX < x & destinationY < y) {
                     for (int i=1; i< Math.abs(destinationX-x); i++) {
-                        if (positionValue((10 * (y - i)) + (x - i))!= null)
+                        if (selectedPiece(x-i,y-i)!= null)
                             return true;
                     }
                 } else if (destinationX - x == 0){
                     if (destinationY > y){
                         for (int i=1; i< Math.abs(destinationY-y); i++){
-                            if(positionValue(10*(y+i) + x )!= null){
+                            if(selectedPiece(x,y+i)!= null){
                                 return true;
                             }
                         }
                     } else {
                         for (int i=1; i< Math.abs(destinationY-y); i++){
-                            if(positionValue(10*(y-i) + x )!= null){
+                            if(selectedPiece(x,y-i)!= null){
                                 return true;
                             }
                         }
@@ -287,13 +287,13 @@ public class GameMenu {
                 }else if (destinationY - y == 0){
                     if (destinationX > x){
                         for (int i=1; i< Math.abs(destinationX-x); i++){
-                            if(positionValue(10*(y) + (x+i))!= null){
+                            if(selectedPiece(x+i, y)!= null){
                                 return true;
                             }
                         }
                     } else {
                         for (int i=1; i< Math.abs(destinationX-x); i++){
-                            if(positionValue(10*(y) + (x-i))!= null){
+                            if(selectedPiece(x-i, y)!= null){
                                 return true;
                             }
                         }
