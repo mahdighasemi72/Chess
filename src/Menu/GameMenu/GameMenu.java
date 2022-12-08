@@ -23,10 +23,12 @@ public class GameMenu {
     private int undo = 0;
     private Plate plate;
     private ArrayList<Piece> chessPlate;
-    private Stack<String> destroyedRivalPieces ;
+    private Stack<Piece> destroyedRivalPieces ;
     private Stack<String> moves ;//(pieceName,position,destinationPosition,enemy)
     private Elephant elephant;
     private Castle castle;
+    private Queen queen;
+    private Soldier soldier;
 
     public GameMenu(PrintMassage printMassage) {
         this.printMassage = printMassage;
@@ -74,10 +76,23 @@ public class GameMenu {
             String lastMove[] = moves.pop().split(",");
             String pieceName = lastMove[0];
             int position = Integer.parseInt(lastMove[1]);
+            int positionX = position % 10;
+            int positionY = position / 10;
+            Point startPoint = new Point(positionX,positionY);
             int destinationPosition = Integer.parseInt(lastMove[2]);
+            int destinationPositionX = destinationPosition % 10;
+            int destinationPositionY = destinationPosition / 10;
+            Point destinationPoint = new Point(destinationPositionX,destinationPositionY);
             String destinationValue = lastMove[3];
-            chessPositions2.put(position,pieceName);
-            chessPositions2.put(destinationPosition,destinationValue);
+            for (Piece piece : chessPlate) {
+                if (piece.getPosition() == destinationPoint){
+                    piece.setPosition(startPoint);
+                }
+            }
+            if (destinationValue != ""){
+                Piece lastDestroyedPiece = destroyedRivalPieces.pop();
+                lastDestroyedPiece.setPosition(destinationPoint);
+            }
             undo++;
             System.out.println(printMassage.UNDO_COMPLETED);
         } else
@@ -178,20 +193,10 @@ public class GameMenu {
         Point destinationPoint = new Point(destinationX,destinationY);
         ArrayList<Point> pointsToCheck;
         if (pieceName.equals(printMassage.PW)) {
-            if (y == 2){
-                if (destinationY == 3){
-                    if (selectedPiece(destinationX,destinationY)!= null){
-                        return true;
-                    }
-                } else if (destinationY == 4){
-                    if (selectedPiece(destinationX,destinationY)!= null | selectedPiece(x,3)!= null){
-                        return true;
-                    }
-                }
-            } else {
-                if (selectedPiece(destinationX,destinationY)!= null){
+            pointsToCheck = soldier.pointsToCheck(startPoint,destinationPoint);
+            for (Point point : pointsToCheck) {
+                if (selectedPiece(point.x, point.y) != null)
                     return true;
-                }
             }
         } else if (pieceName.equals(printMassage.RW)) {
             pointsToCheck = castle.pointsToCheck(startPoint,destinationPoint);
@@ -206,56 +211,12 @@ public class GameMenu {
                     return true;
             }
         }else if (pieceName.equals(printMassage.QW)) {
-                if (destinationX > x & destinationY > y){
-                    for (int i=1; i< Math.abs(destinationX-x); i++) {
-                        if (selectedPiece(x+i,y+i)!= null)
-                            return true;
-                    }
-                } else if (destinationX > x & destinationY < y) {
-                    for (int i=1; i< Math.abs(destinationX-x); i++) {
-                        if (selectedPiece(x+i,y-i)!= null)
-                            return true;
-                    }
-                } else if (destinationX < x & destinationY > y) {
-                    for (int i=1; i< Math.abs(destinationX-x); i++) {
-                        if (selectedPiece(x-i,y+i)!= null)
-                            return true;
-                    }
-                } else if (destinationX < x & destinationY < y) {
-                    for (int i=1; i< Math.abs(destinationX-x); i++) {
-                        if (selectedPiece(x-i,y-i)!= null)
-                            return true;
-                    }
-                } else if (destinationX - x == 0){
-                    if (destinationY > y){
-                        for (int i=1; i< Math.abs(destinationY-y); i++){
-                            if(selectedPiece(x,y+i)!= null){
-                                return true;
-                            }
-                        }
-                    } else {
-                        for (int i=1; i< Math.abs(destinationY-y); i++){
-                            if(selectedPiece(x,y-i)!= null){
-                                return true;
-                            }
-                        }
-                    }
-                }else if (destinationY - y == 0){
-                    if (destinationX > x){
-                        for (int i=1; i< Math.abs(destinationX-x); i++){
-                            if(selectedPiece(x+i, y)!= null){
-                                return true;
-                            }
-                        }
-                    } else {
-                        for (int i=1; i< Math.abs(destinationX-x); i++){
-                            if(selectedPiece(x-i, y)!= null){
-                                return true;
-                            }
-                        }
-                    }
-                }
+            pointsToCheck = queen.pointsToCheck(startPoint, destinationPoint);
+            for (Point point : pointsToCheck) {
+                if (selectedPiece(point.x, point.y) != null)
+                    return true;
             }
+        }
         return false;
     }
 

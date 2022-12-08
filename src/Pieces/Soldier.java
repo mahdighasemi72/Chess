@@ -1,8 +1,10 @@
 package Pieces;
 
 import java.awt.*;
+import java.util.ArrayList;
 
 public class Soldier extends Piece {
+    private ArrayList<Point> pointsToCheck;
     public Soldier(String name, Point position) {
         super(name, position);
     }
@@ -21,5 +23,12 @@ public class Soldier extends Piece {
             }
         }
         return false;
+    }
+
+    public ArrayList<Point> pointsToCheck (Point startPoint,Point destinationPoint){
+        pointsToCheck.add(new Point(destinationPoint));
+        if (startPoint.y == 2 && destinationPoint.y == 4)
+            pointsToCheck.add(new Point(startPoint.x,3));
+        return pointsToCheck;
     }
 }

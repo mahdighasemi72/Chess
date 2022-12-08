@@ -10,10 +10,10 @@ import java.util.Stack;
 public class MoveProcess {
     private PrintMassage printMassage;
     private ArrayList<Piece> chessPlate;
-    private Stack<String> destroyedRivalPieces ;
+    private Stack<Piece> destroyedRivalPieces ;
     private Stack<String> moves ;
 
-    public MoveProcess(ArrayList<Piece> chessPlate, Stack<String> destroyedRivalPieces, Stack<String> moves, PrintMassage printMassage) {
+    public MoveProcess(ArrayList<Piece> chessPlate, Stack<Piece> destroyedRivalPieces, Stack<String> moves, PrintMassage printMassage) {
         this.printMassage = printMassage;
         this.chessPlate = chessPlate;
         this.destroyedRivalPieces = destroyedRivalPieces;
