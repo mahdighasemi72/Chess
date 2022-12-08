@@ -7,6 +7,7 @@ import Menu.GameMenu.GameMenuProcess.Plate;
 import Menu.PrintMassage;
 import Pieces.*;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Stack;
 import java.util.regex.Matcher;
@@ -20,20 +21,18 @@ public class GameMenu {
     private int selectedY;
     private boolean isWhiteTurn = true;
     private int undo = 0;
-//    private HashMap<Integer,String> chessPositions2;
     private Plate plate;
     private ArrayList<Piece> chessPlate;
     private Stack<String> destroyedRivalPieces ;
     private Stack<String> moves ;//(pieceName,position,destinationPosition,enemy)
+    private Elephant elephant;
 
     public GameMenu(PrintMassage printMassage) {
         this.printMassage = printMassage;
-//        chessPositions2 = new HashMap<Integer, String>();
         destroyedRivalPieces = new Stack<>();
         moves = new Stack<>();
         chessPlate = plate.makeFirstChessPlate();
         move = new MoveProcess(chessPlate,destroyedRivalPieces,moves,printMassage);
-//        makeFirstChessPositions();
     }
 
     public int play(String command, String loginUsername, String secondUsername){
@@ -105,7 +104,6 @@ public class GameMenu {
         if (matcher.find()){
             int destinationY = Integer.parseInt(matcher.group(1));
             int destinationX = Integer.parseInt(matcher.group(2));
-//            int destinationPosition = (destinationY*10) + destinationX;
             if (!isWhiteTurn){
                 System.out.println(printMassage.ALREADY_MOVED);
             } else if (destinationY > 8 | destinationY== 0 | destinationX > 8 | destinationX == 0) {
@@ -162,10 +160,6 @@ public class GameMenu {
         }
     }
 
-//    private String positionValue(int position){
-//        String selectedValue = chessPositions2.get(position);
-//        return selectedValue;
-//    }
     private boolean isYours(int x, int y){
         Piece selectedPiece = selectedPiece(x,y);
         String selectedPieceName = selectedPiece.getName();
@@ -179,6 +173,9 @@ public class GameMenu {
     }
     private boolean isBarrierOnPath(Piece piece, int x, int y, int destinationX, int destinationY){
         String pieceName = piece.getName();
+        Point startPoint = new Point(x,y);
+        Point destinationPoint = new Point(destinationX,destinationY);
+        ArrayList<Point> pointsToCheck;
         if (pieceName.equals(printMassage.PW)) {
             if (y == 2){
                 if (destinationY == 3){
@@ -226,26 +223,10 @@ public class GameMenu {
                 }
             }
         } else if (pieceName.equals(printMassage.BW)) {
-            if (destinationX > x & destinationY > y) {
-                for (int i = 1; i < Math.abs(destinationX - x); i++) {
-                    if (selectedPiece(x+i,y+i)!= null)
-                        return true;
-                }
-            } else if (destinationX > x & destinationY < y) {
-                for (int i = 1; i < Math.abs(destinationX - x); i++) {
-                    if (selectedPiece(x+i,y-i)!= null)
-                        return true;
-                }
-            } else if (destinationX < x & destinationY > y) {
-                for (int i = 1; i < Math.abs(destinationX - x); i++) {
-                    if (selectedPiece(x-i,y+i)!= null)
-                        return true;
-                }
-            } else if (destinationX < x & destinationY < y) {
-                for (int i = 1; i < Math.abs(destinationX - x); i++) {
-                    if (selectedPiece(x-i,y-i)!= null)
-                        return true;
-                }
+            pointsToCheck = elephant.pointsToCheck(startPoint,destinationPoint);
+            for (Point point : pointsToCheck) {
+                if (selectedPiece(point.x, point.y) != null)
+                    return true;
             }
         }else if (pieceName.equals(printMassage.QW)) {
                 if (destinationX > x & destinationY > y){
@@ -387,49 +368,6 @@ public class GameMenu {
         isWhiteTurn = false;
         selected = null;
     }
-
-//    private void makeFirstChessPositions(){
-//        for (int i=1; i<9; i++){
-//            for (int j=1; j<9; j++){
-//                chessPositions2.put((i*10)+j, null);
-//            }
-//        }
-//        chessPositions2.put(11,printMassage.RW);
-//        chessPositions2.put(12,printMassage.NW);
-//        chessPositions2.put(13,printMassage.BW);
-//        chessPositions2.put(14,printMassage.QW);
-//        chessPositions2.put(15,printMassage.KW);
-//        chessPositions2.put(16,printMassage.BW);
-//        chessPositions2.put(17,printMassage.NW);
-//        chessPositions2.put(18,printMassage.RW);
-//
-//        chessPositions2.put(21,printMassage.PW);
-//        chessPositions2.put(22,printMassage.PW);
-//        chessPositions2.put(23,printMassage.PW);
-//        chessPositions2.put(24,printMassage.PW);
-//        chessPositions2.put(25,printMassage.PW);
-//        chessPositions2.put(26,printMassage.PW);
-//        chessPositions2.put(27,printMassage.PW);
-//        chessPositions2.put(28,printMassage.PW);
-//
-//        chessPositions2.put(71,printMassage.PB);
-//        chessPositions2.put(72,printMassage.PB);
-//        chessPositions2.put(73,printMassage.PB);
-//        chessPositions2.put(74,printMassage.PB);
-//        chessPositions2.put(75,printMassage.PB);
-//        chessPositions2.put(76,printMassage.PB);
-//        chessPositions2.put(77,printMassage.PB);
-//        chessPositions2.put(78,printMassage.PB);
-//
-//        chessPositions2.put(81,printMassage.RB);
-//        chessPositions2.put(82,printMassage.NB);
-//        chessPositions2.put(83,printMassage.BB);
-//        chessPositions2.put(84,printMassage.QB);
-//        chessPositions2.put(85,printMassage.KB);
-//        chessPositions2.put(86,printMassage.BB);
-//        chessPositions2.put(87,printMassage.NB);
-//        chessPositions2.put(88,printMassage.RB);
-//    }
 }
 
 
