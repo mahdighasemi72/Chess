@@ -26,6 +26,7 @@ public class GameMenu {
     private Stack<String> destroyedRivalPieces ;
     private Stack<String> moves ;//(pieceName,position,destinationPosition,enemy)
     private Elephant elephant;
+    private Castle castle;
 
     public GameMenu(PrintMassage printMassage) {
         this.printMassage = printMassage;
@@ -193,34 +194,10 @@ public class GameMenu {
                 }
             }
         } else if (pieceName.equals(printMassage.RW)) {
-            if (destinationX == x ){
-                if (destinationY > y){
-                    for (int i=1; i< Math.abs(destinationY-y); i++){
-                        if(selectedPiece(x, y+i)!= null){
-                            return true;
-                        }
-                    }
-                } else {
-                    for (int i=1; i< Math.abs(destinationY-y); i++){
-                        if(selectedPiece(x, y-i)!= null){
-                            return true;
-                        }
-                    }
-                }
-            }else if (destinationY == y){
-                if (destinationX > x){
-                    for (int i=1; i< Math.abs(destinationX-x); i++){
-                        if(selectedPiece(x+1, y)!= null){
-                            return true;
-                        }
-                    }
-                } else {
-                    for (int i=1; i< Math.abs(destinationX-x); i++){
-                        if(selectedPiece(x-i, y)!= null){
-                            return true;
-                        }
-                    }
-                }
+            pointsToCheck = castle.pointsToCheck(startPoint,destinationPoint);
+            for (Point point : pointsToCheck) {
+                if (selectedPiece(point.x, point.y) != null)
+                    return true;
             }
         } else if (pieceName.equals(printMassage.BW)) {
             pointsToCheck = elephant.pointsToCheck(startPoint,destinationPoint);
