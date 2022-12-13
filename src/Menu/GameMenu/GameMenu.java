@@ -17,8 +17,6 @@ public class GameMenu {
     private PrintMassage printMassage;
     private MoveProcess move;
     private Piece selected;
-    private int selectedX;
-    private int selectedY;
     private boolean isWhiteTurn = true;
     private int undo = 0;
     private Plate plate;
@@ -26,8 +24,10 @@ public class GameMenu {
     private Stack<Piece> destroyedRivalPieces ;
     private Stack<String> moves ;//(pieceName,position,destinationPosition,enemy)
     private Elephant elephant;
+    private Horse horse;
     private Castle castle;
     private Queen queen;
+    private King king;
     private Soldier soldier;
 
     public GameMenu(PrintMassage printMassage) {
@@ -129,7 +129,8 @@ public class GameMenu {
             } else if (isYours(destinationX,destinationY)) {
                 System.out.println(printMassage.CANNOT_MOVE);
             } else {
-                checkPath(selected,selectedX,selectedY,destinationX,destinationY);
+                Point destination = new Point(destinationX,destinationY);
+                checkPath(selected,destination);
             }
         }
     }
@@ -169,8 +170,6 @@ public class GameMenu {
                 System.out.println(printMassage.SELECT_YOUR_PIECE);
             }else {
                 selected = selectedPiece(x,y);
-                selectedX = x;
-                selectedY = y;
                 System.out.println(printMassage.SELECTED);
             }
         }
@@ -187,31 +186,34 @@ public class GameMenu {
         }
         return false;
     }
-    private boolean isBarrierOnPath(Piece piece, int x, int y, int destinationX, int destinationY){
+    private Point pointOfXY(int x,int y){
+        Point point = new Point(x,y);
+        return point;
+    }
+    private boolean isBarrierOnPath(Piece piece, Point destination){
         String pieceName = piece.getName();
-        Point startPoint = new Point(x,y);
-        Point destinationPoint = new Point(destinationX,destinationY);
+        Point start = piece.getPosition();
         ArrayList<Point> pointsToCheck;
         if (pieceName.equals(printMassage.PW)) {
-            pointsToCheck = soldier.pointsToCheck(startPoint,destinationPoint);
+            pointsToCheck = soldier.pointsToCheck(start,destination);
             for (Point point : pointsToCheck) {
                 if (selectedPiece(point.x, point.y) != null)
                     return true;
             }
         } else if (pieceName.equals(printMassage.RW)) {
-            pointsToCheck = castle.pointsToCheck(startPoint,destinationPoint);
+            pointsToCheck = castle.pointsToCheck(start,destination);
             for (Point point : pointsToCheck) {
                 if (selectedPiece(point.x, point.y) != null)
                     return true;
             }
         } else if (pieceName.equals(printMassage.BW)) {
-            pointsToCheck = elephant.pointsToCheck(startPoint,destinationPoint);
+            pointsToCheck = elephant.pointsToCheck(start,destination);
             for (Point point : pointsToCheck) {
                 if (selectedPiece(point.x, point.y) != null)
                     return true;
             }
         }else if (pieceName.equals(printMassage.QW)) {
-            pointsToCheck = queen.pointsToCheck(startPoint, destinationPoint);
+            pointsToCheck = queen.pointsToCheck(start, destination);
             for (Point point : pointsToCheck) {
                 if (selectedPiece(point.x, point.y) != null)
                     return true;
@@ -220,30 +222,17 @@ public class GameMenu {
         return false;
     }
 
-    public void checkPath(Piece piece, int x, int y, int destinationX, int destinationY){
+    public void checkPath(Piece piece, Point destination){
         String pieceName = piece.getName();
+        Point start = piece.getPosition();
+        int x = start.x;
+        int y = start.y;
+        int destinationX = destination.x;
+        int destinationY = destination.y;
         if (pieceName.equals(printMassage.PW)){
-            if (destinationX == x) {
-                if (y == 2){
-                    if (destinationY == 3 | destinationY == 4){
-                        if (isBarrierOnPath(piece, x, y, destinationX, destinationY)){
-                            System.out.println(printMassage.CANNOT_MOVE);
-                        } else {
-                            setMoveVarriables(x, y, destinationX, destinationY);
-                        }
-                    } else {
-                        System.out.println(printMassage.CANNOT_MOVE);
-                    }
-                } else if (destinationY == y+1){
-                    if (isBarrierOnPath(piece, x, y, destinationX, destinationY))
-                        System.out.println(printMassage.CANNOT_MOVE);
-                    else{
-                        setMoveVarriables(x, y, destinationX, destinationY);
-                    }
-                } else{
-                    System.out.println(printMassage.CANNOT_MOVE);
-                }
-            } else if (destinationX == x + 1 | destinationX == x - 1) {
+            if (destinationX == x && soldier.isCorrectPath(start, destination) && !isBarrierOnPath(piece, destination))
+                setMoveVarriables(x, y, destinationX, destinationY);
+            else if (destinationX == x + 1 | destinationX == x - 1) {
                 if (!isYours(destinationX,destinationY) & selectedPiece(destinationX,destinationY) != null & destinationY == y+1){
                     setMoveVarriables(x, y, destinationX, destinationY);
                 }
@@ -251,54 +240,74 @@ public class GameMenu {
                 System.out.println(printMassage.CANNOT_MOVE);
             }
         } else if (pieceName.equals(printMassage.RW)){
-            if (destinationX == x | destinationY == y){
-                if (isBarrierOnPath(piece, x, y, destinationX, destinationY))
-                    System.out.println(printMassage.CANNOT_MOVE);
-                else {
-                    setMoveVarriables(x, y, destinationX, destinationY);
-                }
-            } else {
-                System.out.println(printMassage.CANNOT_MOVE);
-            }
+            processCastleMove(piece, destination);
         } else if (pieceName.equals(printMassage.NW)) {
-            if (Math.abs(destinationY - y) == 2 & Math.abs(destinationX - x) == 1) {
-                setMoveVarriables(x, y, destinationX, destinationY);
-            } else if (Math.abs(destinationY - y) == 1 & Math.abs(destinationX - x) == 2) {
-                setMoveVarriables(x, y, destinationX, destinationY);
-            } else
-                System.out.println(printMassage.CANNOT_MOVE);
+            processHorseMove(piece, destination);
         } else if (pieceName.equals(printMassage.BW)) {
-            if (Math.abs(destinationY-y) == Math.abs(destinationX-x)){
-                if (isBarrierOnPath(piece,x,y,destinationX,destinationY)){
-                    System.out.println(printMassage.CANNOT_MOVE);
-                }else {
-                    setMoveVarriables(x, y, destinationX, destinationY);
-                }
-            } else
-                System.out.println(printMassage.CANNOT_MOVE);
+            processElephantMove(piece,destination);
         } else if (pieceName.equals(printMassage.QW)) {
-            if (Math.abs(destinationY-y) == Math.abs(destinationX-x)){
-                if (isBarrierOnPath(piece,x,y,destinationX,destinationY)){
-                    System.out.println(printMassage.CANNOT_MOVE);
-                }else {
-                    setMoveVarriables(x, y, destinationX, destinationY);
-                }
-            } else if (destinationX == x | destinationY == y){
-                if (isBarrierOnPath(piece, x, y, destinationX, destinationY))
-                    System.out.println(printMassage.CANNOT_MOVE);
-                else {
-                    setMoveVarriables(x, y, destinationX, destinationY);
-                }
-            } else {
-                System.out.println(printMassage.CANNOT_MOVE);
-            }
+            processQueenMove(piece, destination);
         } else if (pieceName.equals(printMassage.KW)) {
-            if (Math.abs(destinationX-x) < 2 & Math.abs(destinationY-y) < 2){
-                setMoveVarriables(x, y, destinationX, destinationY);
-            } else {
-                System.out.println(printMassage.CANNOT_MOVE);
-            }
+            processKingMove(piece, destination);
         }
+    }
+
+    private void processKingMove(Piece piece, Point destination) {
+        Point start = piece.getPosition();
+        if (king.isCorrectPath(start, destination) && !isBarrierOnPath(piece, destination)){
+            int x = piece.getPosition().x;
+            int y = piece.getPosition().y;
+            int destinationX = destination.x;
+            int destinationY = destination.y;
+            setMoveVarriables(x, y, destinationX, destinationY);
+        }else System.out.println(printMassage.CANNOT_MOVE);
+    }
+
+    private void processQueenMove(Piece piece, Point destination) {
+        Point start = piece.getPosition();
+        if (queen.isCorrectPath(start, destination) && !isBarrierOnPath(piece, destination)){
+            int x = piece.getPosition().x;
+            int y = piece.getPosition().y;
+            int destinationX = destination.x;
+            int destinationY = destination.y;
+            setMoveVarriables(x, y, destinationX, destinationY);
+        } else System.out.println(printMassage.CANNOT_MOVE);
+    }
+
+    private void processElephantMove(Piece piece, Point destination) {
+        Point start = piece.getPosition();
+        if (elephant.isCorrectPath(start, destination) && !isBarrierOnPath(piece, destination)){
+            int x = piece.getPosition().x;
+            int y = piece.getPosition().y;
+            int destinationX = destination.x;
+            int destinationY = destination.y;
+            setMoveVarriables(x, y, destinationX, destinationY);
+        }
+        else System.out.println(printMassage.CANNOT_MOVE);
+    }
+
+    private void processHorseMove(Piece piece, Point destination) {
+        Point start = piece.getPosition();
+        if(horse.isCorrectPath(start, destination)){
+            int x = piece.getPosition().x;
+            int y = piece.getPosition().y;
+            int destinationX = destination.x;
+            int destinationY = destination.y;
+            setMoveVarriables(x, y, destinationX, destinationY);
+        }
+        else System.out.println(printMassage.CANNOT_MOVE);
+    }
+
+    private void processCastleMove(Piece piece, Point destination) {
+        Point start = piece.getPosition();
+        if (castle.isCorrectPath(start, destination) && !isBarrierOnPath(piece, destination)){
+            int x = piece.getPosition().x;
+            int y = piece.getPosition().y;
+            int destinationX = destination.x;
+            int destinationY = destination.y;
+            setMoveVarriables(x, y, destinationX, destinationY);
+        }
+        else System.out.println(printMassage.CANNOT_MOVE);
     }
 
     private void setMoveVarriables(int x, int y, int destinationX, int destinationY) {
