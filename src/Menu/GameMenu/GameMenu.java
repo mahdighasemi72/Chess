@@ -2,7 +2,6 @@ package Menu.GameMenu;
 
 import Menu.ConsoleCommand;
 import Menu.Controller;
-import Menu.GameMenu.GameMenuProcess.MoveProcess;
 import Menu.GameMenu.GameMenuProcess.Plate;
 import Menu.PrintMassage;
 import Pieces.*;
@@ -15,7 +14,6 @@ import java.util.regex.Matcher;
 public class GameMenu {
     private Controller controller = Controller.getInstance() ;
     private PrintMassage printMassage;
-    private MoveProcess move;
     private Piece selected;
     private boolean isWhiteTurn = true;
     private int undo = 0;
@@ -35,7 +33,6 @@ public class GameMenu {
         destroyedRivalPieces = new Stack<>();
         moves = new Stack<>();
         chessPlate = plate.makeFirstChessPlate();
-        move = new MoveProcess(chessPlate,destroyedRivalPieces,moves,printMassage);
     }
 
     public int play(String command, String loginUsername, String secondUsername){
@@ -231,10 +228,10 @@ public class GameMenu {
         int destinationY = destination.y;
         if (pieceName.equals(printMassage.PW)){
             if (destinationX == x && soldier.isCorrectPath(start, destination) && !isBarrierOnPath(piece, destination))
-                setMoveVarriables(x, y, destinationX, destinationY);
+                setMoveVarriables(piece, destination);
             else if (destinationX == x + 1 | destinationX == x - 1) {
                 if (!isYours(destinationX,destinationY) & selectedPiece(destinationX,destinationY) != null & destinationY == y+1){
-                    setMoveVarriables(x, y, destinationX, destinationY);
+                    setMoveVarriables(piece, destination);
                 }
             }else {
                 System.out.println(printMassage.CANNOT_MOVE);
@@ -255,33 +252,21 @@ public class GameMenu {
     private void processKingMove(Piece piece, Point destination) {
         Point start = piece.getPosition();
         if (king.isCorrectPath(start, destination) && !isBarrierOnPath(piece, destination)){
-            int x = piece.getPosition().x;
-            int y = piece.getPosition().y;
-            int destinationX = destination.x;
-            int destinationY = destination.y;
-            setMoveVarriables(x, y, destinationX, destinationY);
+            setMoveVarriables(piece, destination);
         }else System.out.println(printMassage.CANNOT_MOVE);
     }
 
     private void processQueenMove(Piece piece, Point destination) {
         Point start = piece.getPosition();
         if (queen.isCorrectPath(start, destination) && !isBarrierOnPath(piece, destination)){
-            int x = piece.getPosition().x;
-            int y = piece.getPosition().y;
-            int destinationX = destination.x;
-            int destinationY = destination.y;
-            setMoveVarriables(x, y, destinationX, destinationY);
+            setMoveVarriables(piece, destination);
         } else System.out.println(printMassage.CANNOT_MOVE);
     }
 
     private void processElephantMove(Piece piece, Point destination) {
         Point start = piece.getPosition();
         if (elephant.isCorrectPath(start, destination) && !isBarrierOnPath(piece, destination)){
-            int x = piece.getPosition().x;
-            int y = piece.getPosition().y;
-            int destinationX = destination.x;
-            int destinationY = destination.y;
-            setMoveVarriables(x, y, destinationX, destinationY);
+            setMoveVarriables(piece, destination);
         }
         else System.out.println(printMassage.CANNOT_MOVE);
     }
@@ -289,11 +274,7 @@ public class GameMenu {
     private void processHorseMove(Piece piece, Point destination) {
         Point start = piece.getPosition();
         if(horse.isCorrectPath(start, destination)){
-            int x = piece.getPosition().x;
-            int y = piece.getPosition().y;
-            int destinationX = destination.x;
-            int destinationY = destination.y;
-            setMoveVarriables(x, y, destinationX, destinationY);
+            setMoveVarriables(piece, destination);
         }
         else System.out.println(printMassage.CANNOT_MOVE);
     }
@@ -301,17 +282,33 @@ public class GameMenu {
     private void processCastleMove(Piece piece, Point destination) {
         Point start = piece.getPosition();
         if (castle.isCorrectPath(start, destination) && !isBarrierOnPath(piece, destination)){
-            int x = piece.getPosition().x;
-            int y = piece.getPosition().y;
-            int destinationX = destination.x;
-            int destinationY = destination.y;
-            setMoveVarriables(x, y, destinationX, destinationY);
+            setMoveVarriables(piece, destination);
         }
         else System.out.println(printMassage.CANNOT_MOVE);
     }
 
-    private void setMoveVarriables(int x, int y, int destinationX, int destinationY) {
-        move.move(x, y, destinationX, destinationY);
+    private void setMoveVarriables(Piece piece, Point destination) {
+        String pieceName = piece.getName();
+        int x = piece.getPosition().x;
+        int y = piece.getPosition().y;
+        int position = 10*y + x;
+        int destinationX = destination.x;
+        int destinationY = destination.y;
+        int destinationPosition = 10*destinationY +destinationX;
+        if (selectedPiece(destinationX,destinationY) == null){
+            piece.setPosition(destination);
+            System.out.println(printMassage.MOVED);
+            moves.push(pieceName + "," + String.valueOf(position) + "," + String.valueOf(destinationPosition) +
+                    "," + "");
+        }else {
+            Piece rivalPiece = selectedPiece(destinationX,destinationY);
+            moves.push(pieceName + "," + String.valueOf(position) + "," + String.valueOf(destinationPosition) +
+                    "," + rivalPiece.getName());
+            destroyedRivalPieces.push(rivalPiece);
+            rivalPiece.setPosition(new Point(0,0));
+            piece.setPosition(destination);
+            System.out.println(printMassage.RIVAL_PIECE_DESTROYED);
+        }
         isWhiteTurn = false;
         selected = null;
     }
