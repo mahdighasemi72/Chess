@@ -32,6 +32,7 @@ public class GameMenu {
         this.printMassage = printMassage;
         destroyedRivalPieces = new Stack<>();
         moves = new Stack<>();
+        plate = new Plate();
         chessPlate = plate.makeFirstChessPlate();
     }
 

@@ -6,8 +6,13 @@ import java.awt.*;
 import java.util.ArrayList;
 
 public class Plate {
+    private ArrayList<Piece> firstChessPlate ;
+
+    public Plate() {
+        this.firstChessPlate = new ArrayList<Piece>();
+    }
+
     public ArrayList<Piece> makeFirstChessPlate(){
-        ArrayList<Piece> firstChessPlate = new ArrayList<>();
         for (int i=1; i<=8; i++){
             Point position = new Point(i,2);
             Soldier whiteSoldier = new Soldier("Pw", position);
